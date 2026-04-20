@@ -1,8 +1,7 @@
 const { env } = require("../../config/env");
 const { getOpenAIClient } = require("../../config/openai");
 const logger = require("../../utils/logger");
-
-const sleep = async (ms) => new Promise((r) => setTimeout(r, ms));
+const { sleep } = require("../../utils/validationAndCalculations");
 
 const callAI = async (fn, retries = 2, meta = {}) => {
   const client = getOpenAIClient();

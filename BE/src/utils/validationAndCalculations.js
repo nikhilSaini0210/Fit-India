@@ -29,4 +29,6 @@ const calculateDayTotals = (meals) => {
   );
 };
 
-module.exports = { validateDayPlan, calculateDayTotals, validateWorkoutDay };
+const sleep = async (ms) => new Promise((r) => setTimeout(r, ms));
+
+module.exports = { validateDayPlan, calculateDayTotals, validateWorkoutDay, sleep };
