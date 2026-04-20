@@ -1,0 +1,83 @@
+--------------------fitness-app-backend/
+│
+├── src/
+│   │
+│   ├── config/
+│   │   ├── db.js                  # MongoDB connection
+│   │   ├── redis.js               # Redis connection
+│   │   ├── openai.js              # OpenAI client setup
+│   │   └── env.js                 # All env vars validated here
+│   │
+│   ├── routes/
+│   │   ├── index.js               # Root router (mounts all sub-routes)
+│   │   ├── auth.routes.js
+│   │   ├── user.routes.js
+│   │   ├── diet.routes.js
+│   │   ├── workout.routes.js
+│   │   ├── progress.routes.js
+│   │   └── notification.routes.js
+│   │
+│   ├── controllers/
+│   │   ├── auth.controller.js     # register, login, logout, refresh
+│   │   ├── user.controller.js     # getProfile, updateProfile, deleteAccount
+│   │   ├── diet.controller.js     # generateDietPlan, getDietPlan, savePlan
+│   │   ├── workout.controller.js  # generateWorkout, getWorkout, saveWorkout
+│   │   ├── progress.controller.js # logWeight, getProgress, getStreak
+│   │   └── notification.controller.js # sendReminder, updatePrefs
+│   │
+│   ├── services/
+│   │   ├── auth.service.js        # JWT logic, bcrypt, token refresh
+│   │   ├── user.service.js        # User CRUD, profile management
+│   │   ├── diet.service.js        # AI diet generation + calorie calc
+│   │   ├── workout.service.js     # AI workout generation by level/goal
+│   │   ├── progress.service.js    # Weight logs, streak calculation
+│   │   ├── notification.service.js# Schedule/send WhatsApp & SMS
+│   │   ├── openai.service.js      # Centralised OpenAI prompt calls
+│   │   └── whatsapp.service.js    # WhatsApp Cloud API + MSG91 fallback
+│   │
+│   ├── models/
+│   │   ├── User.model.js          # age, gender, weight, height, goal, dietType
+│   │   ├── DietPlan.model.js      # meals[], calories, date, userId
+│   │   ├── WorkoutPlan.model.js   # exercises[], level, type, userId
+│   │   ├── ProgressLog.model.js   # weight, date, userId
+│   │   └── Notification.model.js  # type, scheduledAt, status, userId
+│   │
+│   ├── middleware/
+│   │   ├── auth.middleware.js     # verifyToken (JWT guard)
+│   │   ├── validate.middleware.js # Joi/Zod request validation
+│   │   ├── rateLimiter.middleware.js # express-rate-limit per IP/user
+│   │   ├── errorHandler.middleware.js # Global error catcher
+│   │   └── logger.middleware.js   # Morgan / Winston request logging
+│   │
+│   ├── queues/
+│   │   ├── reminder.queue.js      # BullMQ queue definition
+│   │   ├── reminder.processor.js  # Job processor (sends actual messages)
+│   │   └── scheduler.js           # Node-cron to enqueue daily reminders
+│   │
+│   ├── utils/
+│   │   ├── apiResponse.js         # Standardised { success, data, message }
+│   │   ├── asyncHandler.js        # try/catch wrapper for async controllers
+│   │   ├── logger.js              # Winston logger instance
+│   │   ├── tokenUtils.js          # generate/verify JWT, refresh tokens
+│   │   └── calorieCalculator.js   # BMR + TDEE + macro split logic
+│   │
+│   ├── helpers/
+│   │   ├── promptBuilder.js       # Build OpenAI prompts (diet/workout)
+│   │   ├── mealTemplates.js       # Indian meal template library (rule-based)
+│   │   ├── workoutTemplates.js    # Exercise templates by level + equipment
+│   │   ├── streakCalculator.js    # Compute current + longest streak
+│   │   └── dateHelper.js          # IST timezone utils, week ranges
+│   │
+│   ├── validators/
+│   │   ├── auth.validator.js      # Joi schemas: register, login
+│   │   ├── user.validator.js      # profile update schema
+│   │   ├── diet.validator.js      # diet plan request schema
+│   │   └── progress.validator.js  # weight log schema
+│   │
+│   └── app.js                     # Express app setup (middlewares, routes)
+│
+├── server.js                      # Entry point: starts HTTP + queue workers
+├── .env
+├── .env.example
+├── .gitignore
+└── package.json
