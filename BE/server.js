@@ -5,6 +5,11 @@ const { validateEnv, env } = require("./src/config/env");
 const { connectRedis, disconnectRedis } = require("./src/config/redis");
 const logger = require("./src/utils/logger");
 const app = require("./src/app");
+const {
+  startReminderWorker,
+  stopReminderWorker,
+} = require("./src/queues/reminder.processor");
+const { startScheduler, stopScheduler } = require("./src/queues/scheduler");
 
 let server;
 
@@ -21,12 +26,12 @@ const start = async () => {
     );
   }
 
-  //   try {
-  //     startReminderWorker();
-  //     startScheduler();
-  //   } catch (err) {
-  //     logger.warn(`Queue/scheduler init failed: ${err.message}`);
-  //   }
+  try {
+    startReminderWorker();
+    startScheduler();
+  } catch (err) {
+    logger.warn(`Queue/scheduler init failed: ${err.message}`);
+  }
 
   server = app.listen(env.port, () => {
     logger.info(`🚀 FitIndia API running on port ${env.port} [${env.nodeEnv}]`);
@@ -36,8 +41,8 @@ const start = async () => {
 const shutdown = async (signal) => {
   logger.info(`${signal} received. Shutting down gracefully...`);
 
-  //   stopScheduler();
-  //   await stopReminderWorker();
+  stopScheduler();
+  await stopReminderWorker();
 
   if (server) {
     server.close(async () => {

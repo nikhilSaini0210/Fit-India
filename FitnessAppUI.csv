@@ -1,0 +1,45 @@
+src/
+├── navigation/
+│   ├── AppNavigator.tsx          ← root: auth vs main
+│   ├── AuthStack.tsx             ← 5 auth screens
+│   ├── MainTabNavigator.tsx      ← 5 tabs
+│   ├── DietStack.tsx
+│   ├── WorkoutStack.tsx
+│   ├── ProgressStack.tsx
+│   └── ProfileStack.tsx
+│
+├── screens/
+│   ├── auth/
+│   │   ├── SplashScreen.tsx
+│   │   ├── LoginScreen.tsx
+│   │   ├── RegisterScreen.tsx
+│   │   ├── ProfileSetupScreen.tsx
+│   │   └── ForgotPasswordScreen.tsx
+│   ├── home/
+│   │   └── HomeScreen.tsx
+│   ├── diet/
+│   │   ├── DietTodayScreen.tsx
+│   │   ├── DietPlanScreen.tsx
+│   │   ├── DietDayDetailScreen.tsx
+│   │   ├── MealDetailScreen.tsx
+│   │   ├── GenerateDietScreen.tsx
+│   │   ├── DietHistoryScreen.tsx
+│   │   └── NutritionScreen.tsx
+│   ├── workout/
+│   │   ├── WorkoutTodayScreen.tsx
+│   │   ├── WorkoutPlanScreen.tsx
+│   │   ├── WorkoutDayScreen.tsx
+│   │   ├── ActiveWorkoutScreen.tsx
+│   │   ├── WorkoutCompleteScreen.tsx
+│   │   └── QuickWorkoutScreen.tsx
+│   ├── progress/
+│   │   ├── ProgressScreen.tsx
+│   │   ├── LogWeightScreen.tsx
+│   │   ├── ProgressChartsScreen.tsx
+│   │   └── StreakScreen.tsx
+│   └── profile/
+│       ├── ProfileScreen.tsx
+│       ├── EditProfileScreen.tsx
+│       ├── NotificationSettingsScreen.tsx
+│       ├── SubscriptionScreen.tsx
+│       └── SettingsScreen.tsx

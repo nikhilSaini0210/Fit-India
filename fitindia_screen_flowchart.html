@@ -1,0 +1,207 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:16px 0}
+.section-header{display:flex;align-items:center;gap:10px;margin:20px 0 10px;cursor:pointer;user-select:none}
+.section-header:first-child{margin-top:0}
+.section-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.badge{font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px}
+.chevron{font-size:12px;color:var(--color-text-tertiary);margin-left:auto;transition:transform .2s}
+.chevron.open{transform:rotate(90deg)}
+.screens-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;margin-bottom:4px;overflow:hidden;transition:max-height .3s ease}
+.screen-card{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;cursor:pointer;transition:border-color .15s}
+.screen-card:hover{border-color:var(--color-border-secondary)}
+.screen-card.selected{border-color:var(--color-border-primary);background:var(--color-background-primary)}
+.screen-name{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.screen-file{font-size:11px;color:var(--color-text-tertiary);font-family:var(--font-mono)}
+.screen-tag{font-size:10px;font-weight:500;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:4px}
+.detail-panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;margin:8px 0 16px;display:none}
+.detail-panel.visible{display:block}
+.detail-name{font-size:15px;font-weight:500;color:var(--color-text-primary);margin-bottom:6px}
+.detail-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.detail-label{font-size:12px;color:var(--color-text-secondary);min-width:70px}
+.detail-value{font-size:12px;color:var(--color-text-primary);font-family:var(--font-mono)}
+.apis-list{font-size:12px;color:var(--color-text-secondary);line-height:1.8}
+.apis-list span{display:inline-block;background:var(--color-background-tertiary);border-radius:4px;padding:0 5px;margin:1px 2px;font-family:var(--font-mono);font-size:11px;color:var(--color-text-primary)}
+.total-bar{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 14px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:8px}
+.total-item{text-align:center}
+.total-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.total-lbl{font-size:11px;color:var(--color-text-tertiary)}
+.divider{width:1px;height:32px;background:var(--color-border-tertiary)}
+</style>
+
+<div class="wrap">
+
+<div class="total-bar">
+  <div class="total-item"><div class="total-num">27</div><div class="total-lbl">Total screens</div></div>
+  <div class="divider"></div>
+  <div class="total-item"><div class="total-num">5</div><div class="total-lbl">Auth screens</div></div>
+  <div class="divider"></div>
+  <div class="total-item"><div class="total-num">6</div><div class="total-lbl">Tab screens</div></div>
+  <div class="divider"></div>
+  <div class="total-item"><div class="total-num">7</div><div class="total-lbl">Diet screens</div></div>
+  <div class="divider"></div>
+  <div class="total-item"><div class="total-num">5</div><div class="total-lbl">Workout screens</div></div>
+  <div class="divider"></div>
+  <div class="total-item"><div class="total-num">4</div><div class="total-lbl">Profile screens</div></div>
+  <p style="font-size:12px;color:var(--color-text-secondary);margin-left:auto;align-self:center">Click any screen for details</p>
+</div>
+
+</div>
+
+<div id="detail" class="detail-panel"></div>
+
+<script>
+const sections = [
+  {
+    title: "Auth stack", color: "#534AB7", bg: "#EEEDFE", textColor: "#3C3489", tag: "public",
+    screens: [
+      {name:"Splash / onboarding",file:"SplashScreen.tsx",apis:[],nav:"→ Login or Register",desc:"App intro slides (3 screens), brand, value prop. Shown only on first install."},
+      {name:"Login",file:"LoginScreen.tsx",apis:["POST /auth/login"],nav:"→ Home (tab nav)",desc:"Email + password. Remember me toggle. Forgot password link. Social login buttons (Phase 2)."},
+      {name:"Register",file:"RegisterScreen.tsx",apis:["POST /auth/register"],nav:"→ Profile Setup",desc:"Name, email, phone, password. Terms checkbox."},
+      {name:"Profile setup",file:"ProfileSetupScreen.tsx",apis:["PATCH /users/profile"],nav:"→ Home",desc:"Multi-step: age/gender/weight/height → goal → diet type → activity level → fitness level. Progress bar."},
+      {name:"Forgot password",file:"ForgotPasswordScreen.tsx",apis:[],nav:"→ Login",desc:"Email input → OTP → reset password. 3 sub-screens."},
+    ]
+  },
+  {
+    title: "Main tab navigator", color: "#0F6E56", bg: "#E1F5EE", textColor: "#085041", tag: "tab",
+    screens: [
+      {name:"Home / dashboard",file:"HomeScreen.tsx",apis:["GET /diet/today","GET /workout/today","GET /progress/summary"],nav:"Hub screen",desc:"Today's calories ring, breakfast card, workout card, streak badge, water tracker, quick log button."},
+      {name:"Diet today",file:"DietTodayScreen.tsx",apis:["GET /diet/today","GET /diet/active"],nav:"→ Diet plan, Meal detail",desc:"Breakfast / lunch / snack / dinner cards with calories. Macro progress bars. Mark meal eaten."},
+      {name:"Workout today",file:"WorkoutTodayScreen.tsx",apis:["GET /workout/today","PATCH /workout/complete"],nav:"→ Exercise detail",desc:"Today's focus, exercise list with sets/reps, timer, mark complete button."},
+      {name:"Progress",file:"ProgressScreen.tsx",apis:["GET /progress/summary","GET /progress/history","GET /progress/streak"],nav:"→ Log weight",desc:"Weight chart (line graph), streak calendar, BMI card, measurements history."},
+      {name:"Profile",file:"ProfileScreen.tsx",apis:["GET /users/profile"],nav:"→ Edit profile, Settings",desc:"Avatar, stats summary, goal badge, subscription status, nav to sub-screens."},
+    ]
+  },
+  {
+    title: "Diet screens", color: "#854F0B", bg: "#FAEEDA", textColor: "#633806", tag: "stack",
+    screens: [
+      {name:"Diet plan (7-day)",file:"DietPlanScreen.tsx",apis:["GET /diet/active"],nav:"→ Day detail",desc:"7-day calendar strip. Tap a day to see full meals. Total weekly calories chart."},
+      {name:"Diet day detail",file:"DietDayDetailScreen.tsx",apis:["GET /diet/active"],nav:"→ Meal detail",desc:"All 4 meals for selected day with macros, prep time, ingredients list."},
+      {name:"Meal detail",file:"MealDetailScreen.tsx",apis:[],nav:"modal",desc:"Full meal card: ingredients, nutrition table, prep instructions, swap meal button."},
+      {name:"Generate plan",file:"GenerateDietScreen.tsx",apis:["POST /diet/generate"],nav:"→ Diet plan",desc:"Days selector (7/14/30), AI toggle, loading state with fun animation. Plan preview on success."},
+      {name:"Diet history",file:"DietHistoryScreen.tsx",apis:["GET /diet/history"],nav:"→ Diet plan",desc:"List of all past plans with date, calories, and regenerate button."},
+      {name:"Nutrition targets",file:"NutritionScreen.tsx",apis:["GET /users/nutrition-targets"],nav:"info screen",desc:"BMR, TDEE, calories, protein/carbs/fat targets. Animated macro ring chart."},
+      {name:"Grocery list",file:"GroceryListScreen.tsx",apis:["GET /diet/active"],nav:"from diet plan",desc:"Auto-generated shopping list from current week's plan. Group by category. Check off items. (Phase 2)"},
+    ]
+  },
+  {
+    title: "Workout screens", color: "#993C1D", bg: "#FAECE7", textColor: "#712B13", tag: "stack",
+    screens: [
+      {name:"Workout plan (7-day)",file:"WorkoutPlanScreen.tsx",apis:["GET /workout/active"],nav:"→ Day detail",desc:"Week strip with focus labels (Chest, Legs, Rest...). Completion checkmarks. Generate new plan button."},
+      {name:"Workout day detail",file:"WorkoutDayScreen.tsx",apis:["GET /workout/active"],nav:"→ Active workout",desc:"Warmup, exercise list, cooldown. Duration + calories. Start workout button."},
+      {name:"Active workout",file:"ActiveWorkoutScreen.tsx",apis:["PATCH /workout/complete"],nav:"→ Workout complete",desc:"Full-screen exercise mode. Set/rep counter, rest timer, swipe to next exercise. Keep screen on."},
+      {name:"Workout complete",file:"WorkoutCompleteScreen.tsx",apis:[],nav:"→ Home",desc:"Celebration screen. Calories burned, duration, streak update. Share button."},
+      {name:"Quick workout",file:"QuickWorkoutScreen.tsx",apis:["GET /workout/quick"],nav:"from home",desc:"Focus picker (legs/chest/arms/full body), workout type toggle (home/gym), instant generate."},
+    ]
+  },
+  {
+    title: "Progress & tracking", color: "#185FA5", bg: "#E6F1FB", textColor: "#0C447C", tag: "stack",
+    screens: [
+      {name:"Log weight",file:"LogWeightScreen.tsx",apis:["POST /progress/log"],nav:"modal / sheet",desc:"Weight input (kg/lbs), body measurements accordion, mood selector, notes. Date picker for past logs."},
+      {name:"Progress charts",file:"ProgressChartsScreen.tsx",apis:["GET /progress/history"],nav:"from progress tab",desc:"Weight line chart, period filter (week/month/3mo/year), measurements charts, before/after comparison."},
+      {name:"Streak & badges",file:"StreakScreen.tsx",apis:["GET /progress/streak"],nav:"from home badge",desc:"Current streak, longest streak, activity calendar heatmap, achievement badges."},
+    ]
+  },
+  {
+    title: "Profile & settings", color: "#3C3489", bg: "#EEEDFE", textColor: "#26215C", tag: "stack",
+    screens: [
+      {name:"Edit profile",file:"EditProfileScreen.tsx",apis:["PATCH /users/profile"],nav:"from profile",desc:"All physical stats, goal, diet type, activity level, allergies, injuries. Save button."},
+      {name:"Notification settings",file:"NotificationSettingsScreen.tsx",apis:["PATCH /users/notifications","POST /push/register"],nav:"from profile",desc:"Toggle morning/afternoon/evening. WhatsApp on/off, SMS on/off, Push on/off. Test notification button."},
+      {name:"Subscription",file:"SubscriptionScreen.tsx",apis:[],nav:"from profile",desc:"Free vs Premium comparison. ₹199/mo and ₹499/mo plans. Razorpay integration. Current plan badge."},
+      {name:"App settings",file:"SettingsScreen.tsx",apis:["DELETE /users/account"],nav:"from profile",desc:"Units (kg/lbs), language, dark mode toggle, logout, delete account, app version, privacy policy."},
+    ]
+  },
+];
+
+let selectedScreen = null;
+let openSections = new Set([0,1,2,3,4,5]);
+
+function renderAll() {
+  const wrap = document.querySelector('.wrap');
+  wrap.innerHTML = '';
+
+  // totals bar
+  const total = sections.reduce((a,s) => a + s.screens.length, 0);
+  const bar = document.createElement('div');
+  bar.className = 'total-bar';
+  bar.innerHTML = `
+    <div class="total-item"><div class="total-num">${total}</div><div class="total-lbl">Total screens</div></div>
+    <div class="divider"></div>
+    ${sections.map(s=>`<div class="total-item"><div class="total-num">${s.screens.length}</div><div class="total-lbl">${s.title.split(' ')[0]} screens</div></div><div class="divider"></div>`).join('')}
+    <p style="font-size:12px;color:var(--color-text-secondary);margin-left:auto;align-self:center">Click any screen for details</p>
+  `;
+  wrap.appendChild(bar);
+
+  sections.forEach((section, si) => {
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    const isOpen = openSections.has(si);
+    header.innerHTML = `
+      <span style="width:10px;height:10px;border-radius:2px;background:${section.color};flex-shrink:0"></span>
+      <span class="section-title">${section.title}</span>
+      <span class="badge" style="background:${section.bg};color:${section.textColor}">${section.screens.length} screens</span>
+      <span class="chevron ${isOpen?'open':''}">▶</span>
+    `;
+    header.addEventListener('click', () => {
+      if (openSections.has(si)) openSections.delete(si);
+      else openSections.add(si);
+      renderAll();
+    });
+    wrap.appendChild(header);
+
+    if (isOpen) {
+      const grid = document.createElement('div');
+      grid.className = 'screens-grid';
+      section.screens.forEach((screen, sci) => {
+        const id = `${si}-${sci}`;
+        const card = document.createElement('div');
+        card.className = 'screen-card' + (selectedScreen === id ? ' selected' : '');
+        card.innerHTML = `
+          <div class="screen-name">${screen.name}</div>
+          <div class="screen-file">${screen.file}</div>
+          <span class="screen-tag" style="background:${section.bg};color:${section.textColor}">${section.tag}</span>
+        `;
+        card.addEventListener('click', () => {
+          selectedScreen = selectedScreen === id ? null : id;
+          renderAll();
+          if (selectedScreen) {
+            setTimeout(() => {
+              document.getElementById('detail')?.scrollIntoView({behavior:'smooth',block:'nearest'});
+            }, 50);
+          }
+        });
+        grid.appendChild(card);
+      });
+      wrap.appendChild(grid);
+
+      // detail panel inside this section
+      if (selectedScreen && selectedScreen.startsWith(si+'-')) {
+        const [,sci] = selectedScreen.split('-').map(Number);
+        const screen = section.screens[sci];
+        if (screen) {
+          const panel = document.createElement('div');
+          panel.className = 'detail-panel visible';
+          panel.id = 'detail';
+          panel.innerHTML = `
+            <div class="detail-name">${screen.name}</div>
+            <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px">
+              <div><div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px">File</div><div style="font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary)">${screen.file}</div></div>
+              <div><div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:2px">Navigation</div><div style="font-size:12px;color:var(--color-text-secondary)">${screen.nav}</div></div>
+            </div>
+            <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;line-height:1.6">${screen.desc}</div>
+            ${screen.apis.length ? `
+              <div style="font-size:11px;color:var(--color-text-tertiary);margin-bottom:4px">API calls</div>
+              <div class="apis-list">${screen.apis.map(a=>`<span>${a}</span>`).join(' ')}</div>
+            ` : `<div style="font-size:11px;color:var(--color-text-tertiary)">No API calls — local state only</div>`}
+          `;
+          wrap.appendChild(panel);
+        }
+      }
+    }
+  });
+}
+
+renderAll();
+</script>

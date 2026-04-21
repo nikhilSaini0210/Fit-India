@@ -3,18 +3,11 @@ const logger = require("../../utils/logger");
 
 const normalizeToken = (token) => token?.trim();
 
-const getIP = (req) =>
-  req.headers["x-forwarded-for"]?.split(",")[0] || req.socket?.remoteAddress;
-
 const registerToken = async (
   userId,
   ip,
   { fcmToken, deviceId, platform, deviceName, appVersion },
 ) => {
-  if (!userId || !fcmToken || !deviceId || !platform) {
-    throw new Error("Missing required device fields");
-  }
-
   fcmToken = normalizeToken(fcmToken);
 
   const token = await DeviceToken.findOneAndUpdate(
