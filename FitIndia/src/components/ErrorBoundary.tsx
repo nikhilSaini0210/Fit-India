@@ -19,6 +19,10 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false, error: null };
 
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, error };
+  }
+
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // TODO: send to Sentry / Crashlytics
     console.error('[ErrorBoundary]', error, errorInfo.componentStack);

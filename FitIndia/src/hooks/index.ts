@@ -20,3 +20,13 @@ export {
   useLogProgress,
 } from './useProgress';
 
+export {
+  useFadeIn,
+  useSlideUp,
+  useScalePop,
+  usePulse,
+  useShimmer,
+  usePressScale,
+  useStagger,
+  useRotate,
+} from './useAnimations';

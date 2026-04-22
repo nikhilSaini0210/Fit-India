@@ -1,3 +1,4 @@
+import { ThemeType } from '../constants';
 import {
   AuthTokens,
   DietDay,
@@ -52,6 +53,12 @@ export interface WorkoutState {
   setTodaysWorkout: (day: WorkoutDay) => void;
   markDayComplete: (dayNumber: number) => void;
   clearWorkout: () => void;
+}
+
+export interface AppSettings {
+  theme: ThemeType;
+  units: 'metric' | 'imperial';
+  language: 'en' | 'hi';
 }
 
 export interface CacheEntry<T> {

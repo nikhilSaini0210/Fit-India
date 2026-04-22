@@ -22,16 +22,10 @@ const hp = (percentage: number) => (SCREEN_HEIGHT * percentage) / 100;
 export const rs = {
   screenWidth: SCREEN_WIDTH,
   screenHeight: SCREEN_HEIGHT,
-
-  /* Layout */
   scale,
   verticalScale,
   moderateScale,
-
-  /* Percentage Layout */
   wp,
   hp,
-
-  /* Fonts */
   font,
-};
+} as const;

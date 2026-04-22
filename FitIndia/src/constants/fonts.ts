@@ -7,3 +7,5 @@ export const fonts = {
   Thin: 'NotoSans-Thin',
   Italic: 'NotoSans-Italic',
 } as const;
+
+export type FontWeight = keyof typeof fonts;

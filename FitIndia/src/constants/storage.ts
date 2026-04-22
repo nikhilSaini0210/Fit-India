@@ -3,6 +3,7 @@ export const STORAGE_KEYS = {
   DIET_STORE: 'fitindia-diet',
   PROGRESS_STORE: 'fitindia-progress',
   WORKOUT_STORE: 'fitindia-workout',
+  APP_STORE: 'fitindia-app',
 
   STORE_ID: 'fitindia.store',
   STORE_KEY: 'bhfg#jfi&HgAu*nsii@FjAE&nfej#nd',
