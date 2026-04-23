@@ -3,8 +3,8 @@ import type { FC } from 'react';
 import { View, Text } from 'react-native';
 import { AuthStackParamList } from '../../types';
 import { AUTH_ROUTES } from '../../constants';
-import { SplashScreen } from '../../screens/SplashScreen';
 import OnBoardingScreen from '../../screens/OnBoardingScreen';
+import { SplashScreen } from '../../screens';
 
 const Placeholder: FC = ({ route }: any) => (
   <View
