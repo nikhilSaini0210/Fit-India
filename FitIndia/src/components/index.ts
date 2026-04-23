@@ -7,3 +7,4 @@ export { default as Input } from './ui/Input';
 export { default as Icon } from './ui/Icon';
 export { default as Button } from './ui/Button';
 export { default as Divider } from './ui/Divider';
+export { default as Header } from './ui/Header';

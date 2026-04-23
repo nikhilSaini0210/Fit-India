@@ -1,9 +1,13 @@
 import React, { createContext, useContext, useCallback, useState } from 'react';
 import { Modal, View, Text, Pressable, StyleSheet } from 'react-native';
+import { Button } from '../components';
+import { rs } from '../utils';
+import { fonts } from '../constants';
+import { useColors } from '../store';
 
 interface ModalButton {
   label: string;
-  variant: 'primary' | 'danger' | 'ghost';
+  variant: 'primary' | 'secondary' | 'ghost' | 'danger';
   onPress: () => void;
 }
 interface ModalConfig {
@@ -17,6 +21,7 @@ const ModalContext = createContext<(cfg: ModalConfig) => void>(() => {});
 export const useModal = () => useContext(ModalContext);
 
 export function ModalProvider({ children }: { children: React.ReactNode }) {
+  const colors = useColors();
   const [cfg, setCfg] = useState<ModalConfig | null>(null);
 
   const show = useCallback((c: ModalConfig) => setCfg(c), []);
@@ -28,17 +33,33 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
       <Modal
         visible={!!cfg}
         transparent
+        statusBarTranslucent
         animationType="fade"
         onRequestClose={close}
       >
-        <Pressable style={styles.overlay} onPress={close}>
-          <Pressable style={styles.box} onPress={e => e.stopPropagation()}>
-            <Text style={styles.title}>{cfg?.title}</Text>
-            <Text style={styles.msg}>{cfg?.message}</Text>
+        <Pressable
+          style={[styles.overlay, { backgroundColor: colors.overlay }]}
+          onPress={close}
+        >
+          <Pressable
+            style={[styles.box, { backgroundColor: colors.background }]}
+            onPress={e => e.stopPropagation()}
+          >
+            <Text style={[styles.title, { color: colors.textPrimary }]}>
+              {cfg?.title}
+            </Text>
+            <Text style={[styles.msg, { color: colors.textSecondary }]}>
+              {cfg?.message}
+            </Text>
             {cfg?.errors && (
-              <View style={styles.errList}>
+              <View
+                style={[styles.errList, { backgroundColor: colors.errorLight }]}
+              >
                 {cfg.errors.map((e, i) => (
-                  <Text key={i} style={styles.errItem}>
+                  <Text
+                    key={i}
+                    style={[styles.errItem, { color: colors.error }]}
+                  >
                     • {e}
                   </Text>
                 ))}
@@ -46,23 +67,16 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
             )}
             <View style={styles.footer}>
               {cfg?.buttons.map((b, i) => (
-                <Pressable
+                <Button
                   key={i}
-                  style={[styles.btn, styles[b.variant]]}
+                  label={b.label}
                   onPress={() => {
                     b.onPress();
                     close();
                   }}
-                >
-                  <Text
-                    style={[
-                      styles.btnText,
-                      b.variant === 'ghost' && styles.ghostText,
-                    ]}
-                  >
-                    {b.label}
-                  </Text>
-                </Pressable>
+                  size="sm"
+                  variant={b.variant}
+                />
               ))}
             </View>
           </Pressable>
@@ -75,37 +89,41 @@ export function ModalProvider({ children }: { children: React.ReactNode }) {
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.4)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: rs.scale(24),
   },
   box: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 24,
+    borderRadius: rs.scale(20),
+    padding: rs.scale(24),
     width: '100%',
-    maxWidth: 400,
+    maxWidth: rs.scale(400),
   },
-  title: { fontSize: 17, fontWeight: '700', color: '#111', marginBottom: 8 },
-  msg: { fontSize: 14, color: '#555', lineHeight: 20, marginBottom: 16 },
+  title: {
+    fontSize: rs.font(17),
+    fontFamily: fonts.Medium,
+    marginBottom: rs.verticalScale(8),
+  },
+  msg: {
+    fontSize: rs.font(14),
+    fontFamily: fonts.Regular,
+    lineHeight: rs.font(20),
+    marginBottom: rs.verticalScale(16),
+  },
   errList: {
-    backgroundColor: '#f8f8f8',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 16,
-    gap: 4,
+    borderRadius: rs.scale(10),
+    padding: rs.scale(12),
+    marginBottom: rs.verticalScale(16),
+    gap: rs.scale(4),
   },
-  errItem: { fontSize: 13, color: '#E24B4A', lineHeight: 18 },
-  footer: { flexDirection: 'row', gap: 10, justifyContent: 'flex-end' },
-  btn: { borderRadius: 10, paddingVertical: 10, paddingHorizontal: 20 },
-  primary: { backgroundColor: '#111' },
-  danger: { backgroundColor: '#E24B4A' },
-  ghost: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#ddd',
+  errItem: {
+    fontSize: rs.font(13),
+    fontFamily: fonts.Regular,
+    lineHeight: rs.font(18),
   },
-  btnText: { fontSize: 14, fontWeight: '600', color: '#fff' },
-  ghostText: { color: '#555' },
+  footer: {
+    flexDirection: 'row',
+    gap: rs.scale(10),
+    justifyContent: 'flex-end',
+  },
 });

@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useCallback, useState } from 'react';
 import { View, Text, Pressable, Animated, StyleSheet } from 'react-native';
 import { useColors } from '../store';
+import { AppColors, fonts } from '../constants';
+import { rs } from '../utils';
+import { Icon } from '../components';
 
 type ToastType = 'success' | 'error' | 'warning' | 'info';
 
@@ -20,16 +23,26 @@ interface ToastItem extends ToastConfig {
 const ToastContext = createContext<(cfg: ToastConfig) => void>(() => {});
 export const useToast = () => useContext(ToastContext);
 
-const COLORS = {
-  success: { bg: '#EAF3DE', text: '#3B6D11', dot: '#639922' },
-  error: { bg: '#FCEBEB', text: '#A32D2D', dot: '#E24B4A' },
-  warning: { bg: '#FAEEDA', text: '#854F0B', dot: '#EF9F27' },
-  info: { bg: '#E6F1FB', text: '#185FA5', dot: '#378ADD' },
-};
+const getColors = (Colors: AppColors) => ({
+  success: {
+    bg: Colors.successLight,
+    text: Colors.success,
+    dot: Colors.success,
+  },
+  error: { bg: Colors.errorLight, text: Colors.error, dot: Colors.error },
+  warning: {
+    bg: Colors.warningLight,
+    text: Colors.warning,
+    dot: Colors.warning,
+  },
+  info: { bg: Colors.infoLight, text: Colors.info, dot: Colors.info },
+});
 
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const colors = useColors();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+
+  const COLORS = getColors(colors);
 
   const dismiss = useCallback((id: string, anim: Animated.Value) => {
     Animated.timing(anim, {
@@ -69,6 +82,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 styles.toast,
                 {
                   opacity: t.anim,
+                  backgroundColor: colors.background,
+                  shadowColor: colors.primary,
                   transform: [
                     {
                       translateY: t.anim.interpolate({
@@ -82,8 +97,16 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             >
               <View style={[styles.dot, { backgroundColor: c.dot }]} />
               <View style={styles.toastBody}>
-                <Text style={styles.toastTitle}>{t.title}</Text>
-                <Text style={styles.toastMsg}>{t.message}</Text>
+                <Text
+                  style={[styles.toastTitle, { color: colors.textPrimary }]}
+                >
+                  {t.title}
+                </Text>
+                <Text
+                  style={[styles.toastMsg, { color: colors.textSecondary }]}
+                >
+                  {t.message}
+                </Text>
                 {t.action && (
                   <Pressable
                     onPress={() => {
@@ -101,7 +124,12 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 onPress={() => dismiss(t.id, t.anim)}
                 style={styles.closeBtn}
               >
-                <Text style={styles.closeText}>✕</Text>
+                <Icon
+                  iconFamily="MaterialCommunityIcons"
+                  name="close"
+                  size={rs.font(14)}
+                  color={colors.backgroundMuted}
+                />
               </Pressable>
             </Animated.View>
           );
@@ -114,35 +142,50 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
 const styles = StyleSheet.create({
   region: {
     position: 'absolute',
-    bottom: 32,
-    left: 16,
-    right: 16,
-    gap: 10,
+    bottom: rs.scale(32),
+    left: rs.scale(16),
+    right: rs.scale(16),
+    gap: rs.scale(10),
     zIndex: 999,
   },
   toast: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
-    backgroundColor: '#fff',
-    borderRadius: 14,
-    padding: 14,
-    shadowColor: '#000',
+    gap: rs.scale(12),
+
+    borderRadius: rs.scale(14),
+    padding: rs.scale(14),
     shadowOpacity: 0.08,
-    shadowRadius: 12,
+    shadowRadius: rs.scale(12),
     shadowOffset: { width: 0, height: 4 },
     elevation: 5,
   },
-  dot: { width: 8, height: 8, borderRadius: 4, marginTop: 5, flexShrink: 0 },
-  toastBody: { flex: 1 },
-  toastTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#111',
-    marginBottom: 2,
+  dot: {
+    width: rs.scale(8),
+    height: rs.scale(8),
+    borderRadius: rs.scale(4),
+    marginTop: rs.verticalScale(5),
+    flexShrink: 0,
   },
-  toastMsg: { fontSize: 13, color: '#666', lineHeight: 18 },
-  toastAction: { fontSize: 13, fontWeight: '600', marginTop: 8 },
-  closeBtn: { padding: 2 },
-  closeText: { fontSize: 14, color: '#aaa' },
+  toastBody: {
+    flex: 1,
+  },
+  toastTitle: {
+    fontSize: rs.font(14),
+    fontFamily: fonts.SemiBold,
+    marginBottom: rs.verticalScale(2),
+  },
+  toastMsg: {
+    fontSize: rs.font(13),
+    fontFamily: fonts.Regular,
+    lineHeight: rs.font(18),
+  },
+  toastAction: {
+    fontSize: rs.font(13),
+    fontFamily: fonts.SemiBold,
+    marginTop: rs.verticalScale(8),
+  },
+  closeBtn: {
+    padding: rs.scale(2),
+  },
 });

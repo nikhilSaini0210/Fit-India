@@ -1,23 +1,15 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { FC } from 'react';
-import { View, Text } from 'react-native';
 import { AuthStackParamList } from '../../types';
 import { AUTH_ROUTES } from '../../constants';
 import OnBoardingScreen from '../../screens/OnBoardingScreen';
-import { LoginScreen, SplashScreen } from '../../screens';
-
-const Placeholder: FC = ({ route }: any) => (
-  <View
-    style={{
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#000',
-    }}
-  >
-    <Text style={{ color: '#fff' }}>{route.name}</Text>
-  </View>
-);
+import {
+  ForgotPasswordScreen,
+  LoginScreen,
+  ProfileSetupScreen,
+  RegisterScreen,
+  SplashScreen,
+} from '../../screens';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -35,12 +27,12 @@ const AuthStack: FC = () => {
       <Stack.Screen name={AUTH_ROUTES.LOGIN} component={LoginScreen} />
       <Stack.Screen
         name={AUTH_ROUTES.REGISTER}
-        component={Placeholder}
+        component={RegisterScreen}
         options={{ animation: 'slide_from_right' }}
       />
       <Stack.Screen
         name={AUTH_ROUTES.PROFILE_SETUP}
-        component={Placeholder}
+        component={ProfileSetupScreen}
         options={{
           animation: 'slide_from_right',
           gestureEnabled: false,
@@ -48,7 +40,7 @@ const AuthStack: FC = () => {
       />
       <Stack.Screen
         name={AUTH_ROUTES.FORGOT_PW}
-        component={Placeholder}
+        component={ForgotPasswordScreen}
         options={{
           presentation: 'modal',
           animation: 'slide_from_bottom',

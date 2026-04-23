@@ -101,7 +101,8 @@ const Input: FC<InputProps> = ({
     ? colors.primary
     : colors.textTertiary;
 
-  const labelBg = focused ? colors.background : colors.backgroundSurface;
+  const labelBg =
+    focused || props.value ? colors.background : colors.backgroundSurface;
 
   const rightIconName = secure
     ? showPw
