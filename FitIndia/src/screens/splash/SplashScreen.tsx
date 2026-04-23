@@ -1,118 +1,105 @@
-import React, { FC, useEffect, useRef } from 'react';
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  StyleSheet,
-  Image,
-  Animated,
-  Easing,
-} from 'react-native';
+import React, { FC, useEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import {
   OnboardingStorage,
   selectIsLoggedIn,
   selectProfileComplete,
-  storage,
   useAuthStore,
+  useColors,
 } from '../../store';
 import { resetAndNavigate, rs } from '../../utils';
-import { AUTH_ROUTES, fonts, ROOT_ROUTES, STORAGE_KEYS } from '../../constants';
+import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
 import ImageBackgroundView from './ImageBackgroundView';
-// import LinearGradient from 'react-native-linear-gradient';
-import Svg, { Path, Defs, LinearGradient, Stop } from 'react-native-svg';
+import Features from './Features';
+import { GradientProgressBar, RunningLoader } from '../../components';
 
 const SplashScreen: FC = () => {
+  const colors = useColors();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
 
-  // useEffect(() => {
-  //   const resolve = async () => {
-  //     await new Promise<void>(r => setTimeout(r, 600));
+  useEffect(() => {
+    const resolve = async () => {
+      await new Promise<void>(r => setTimeout(r, 600));
 
-  //     if (!isLoggedIn) {
-  //       const onboarded = OnboardingStorage.isComplete();
-  //       resetAndNavigate(ROOT_ROUTES.AUTH, {
-  //         screen: onboarded ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING,
-  //       });
-  //       return;
-  //     }
+      if (!isLoggedIn) {
+        const onboarded = OnboardingStorage.isComplete();
+        resetAndNavigate(ROOT_ROUTES.AUTH, {
+          screen: onboarded ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.LOGIN,
+        });
+        return;
+      }
 
-  //     if (!profileComplete) {
-  //       resetAndNavigate(ROOT_ROUTES.AUTH, {
-  //         screen: AUTH_ROUTES.PROFILE_SETUP,
-  //       });
-  //       return;
-  //     }
+      if (!profileComplete) {
+        resetAndNavigate(ROOT_ROUTES.AUTH, {
+          screen: AUTH_ROUTES.PROFILE_SETUP,
+        });
+        return;
+      }
 
-  //     resetAndNavigate(ROOT_ROUTES.MAIN);
-  //   };
+      resetAndNavigate(ROOT_ROUTES.MAIN);
+    };
 
-  //   resolve();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
+    resolve();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <ImageBackgroundView>
       <View style={styles.container}>
-        <Image
-          style={styles.logo}
-          source={require('../../assets/images/applogo.png')}
-          resizeMode="contain"
-        />
+        <View style={styles.top}>
+          <Image
+            source={require('../../assets/images/app_logo.png')}
+            style={styles.logo}
+            resizeMode="contain"
+          />
 
-        {/* FitSutra AI Title */}
-        <View style={styles.titleRow}>
-          <Text style={styles.titleFit}>Fit</Text>
-          <Text style={styles.titleSutra}>Sutra </Text>
+          <Image
+            source={require('../../assets/images/app_name.png')}
+            style={styles.appName}
+            resizeMode="contain"
+          />
 
-          {/* AI with leaf on i */}
-          <View style={styles.aiWrapper}>
-            <Text style={styles.titleAI}>A</Text>
+          <Text style={[styles.subtitle, { color: colors.textTertiary }]}>
+            FITNESS • DIET • AI COACH
+          </Text>
+        </View>
 
-            {/* "i" with leaf replacing the dot */}
-            <View style={styles.iWrapper}>
-              {/* Leaf dot above */}
-              <Svg
-                width={rs.scale(10)}
-                height={rs.scale(13)}
-                viewBox="0 0 10 13"
-                style={styles.leafSvg}
-              >
-                <Path
-                  d="M5 0 C5 0 10 3 10 7 C10 10 7.5 12 5 12 C2.5 12 0 10 0 7 C0 3 5 0 5 0 Z"
-                  fill="#22C55E"
-                />
-              </Svg>
-              {/* i stem only, lineHeight hides the font dot */}
-              <Text style={styles.iStem}>i</Text>
-            </View>
+        <View style={styles.middle}>
+          <Image
+            source={require('../../assets/images/running_man.png')}
+            style={styles.runner}
+            resizeMode="contain"
+          />
+
+          <View style={styles.featuresContainer}>
+            <Features />
           </View>
         </View>
 
-        {/* Subtitle */}
-        <Text style={styles.subtitle}>FITNESS • DIET • AI COACH</Text>
+        <View style={styles.bottom}>
+          <Text style={[styles.loadingText, { color: colors.textPrimary }]}>
+            Your Health Journey Begins...
+          </Text>
 
-        {/* Curved SVG underline with proper react-native-svg gradient */}
-        <Svg
-          width={rs.scale(220)}
-          height={rs.verticalScale(18)}
-          viewBox="0 0 220 18"
-          style={styles.curveSvg}
-        >
-          <Defs>
-            <LinearGradient id="curveGrad" x1="0" y1="0" x2="1" y2="0">
-              <Stop offset="0" stopColor="#22C55E" stopOpacity="1" />
-              <Stop offset="1" stopColor="#F97316" stopOpacity="1" />
-            </LinearGradient>
-          </Defs>
-          <Path
-            d="M10 14 Q110 2 210 14"
-            stroke="url(#curveGrad)"
-            strokeWidth="3"
-            fill="none"
-            strokeLinecap="round"
-          />
-        </Svg>
+          <View style={styles.loaderWrapper}>
+            <View style={styles.loaderView}>
+              <GradientProgressBar
+                progress={0.8}
+                height={12}
+                gradientColors={colors.progressGradient}
+              />
+            </View>
+
+            <View style={styles.runnerOverlay}>
+              <RunningLoader width={rs.scale(60)} height={rs.scale(60)} />
+            </View>
+          </View>
+
+          <Text style={[styles.loading, { color: colors.loading }]}>
+            Loading...
+          </Text>
+        </View>
       </View>
     </ImageBackgroundView>
   );
@@ -122,75 +109,79 @@ export default SplashScreen;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    paddingHorizontal: rs.moderateScale(20),
+  },
+
+  top: {
     alignItems: 'center',
-    justifyContent: 'center',
-    // gap: rs.verticalScale(12),
+    marginTop: rs.verticalScale(40),
   },
 
   logo: {
-    width: rs.scale(180),
-    height: rs.scale(180),
-    marginBottom: rs.verticalScale(4),
+    width: rs.scale(120),
+    height: rs.scale(120),
   },
 
-  titleRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-
-  titleFit: {
-    fontFamily: fonts.ExtraBold,
-    fontSize: rs.font(42),
-    color: '#16A34A',
-    letterSpacing: -0.5,
-  },
-
-  titleSutra: {
-    fontFamily: fonts.ExtraBold,
-    fontSize: rs.font(42),
-    color: '#F97316',
-    letterSpacing: -0.5,
-  },
-
-  aiWrapper: {
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-  },
-
-  titleAI: {
-    fontFamily: fonts.ExtraBold,
-    fontSize: rs.font(42),
-    color: '#22C55E',
-    letterSpacing: -0.5,
-  },
-
-  iWrapper: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    marginBottom: rs.verticalScale(17),
-  },
-
-  leafSvg: {
-    marginBottom: rs.verticalScale(-2),
-  },
-
-  iStem: {
-    fontFamily: fonts.ExtraBold,
-    fontSize: rs.font(42),
-    color: '#22C55E',
-    letterSpacing: -0.5,
-    lineHeight: rs.font(38),
+  appName: {
+    width: rs.scale(220),
+    height: rs.scale(80),
+    marginTop: rs.verticalScale(-10),
   },
 
   subtitle: {
     fontFamily: fonts.Medium,
     fontSize: rs.font(13),
-    color: '#94A3B8',
-    letterSpacing: 2.5,
-    marginTop: rs.verticalScale(2),
+    letterSpacing: rs.font(2),
   },
 
-  curveSvg: {
-    marginTop: rs.verticalScale(4),
+  middle: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+
+  runner: {
+    width: '50%',
+    height: rs.verticalScale(300),
+  },
+
+  featuresContainer: {
+    width: '50%',
+    justifyContent: 'center',
+  },
+
+  bottom: {
+    alignItems: 'center',
+    marginBottom: rs.verticalScale(20),
+  },
+
+  loadingText: {
+    fontSize: rs.font(15),
+    fontFamily: fonts.SemiBold,
+    letterSpacing: rs.font(0.2),
+  },
+
+  loaderWrapper: {
+    width: '70%',
+    justifyContent: 'center',
+  },
+
+  loaderView: {
+    width: '100%',
+    paddingVertical: rs.verticalScale(10),
+  },
+
+  runnerOverlay: {
+    position: 'absolute',
+    right: -rs.scale(50),
+    bottom: -rs.scale(10),
+  },
+
+  loading: {
+    fontSize: rs.font(13),
+    fontFamily: fonts.SemiBold,
+    letterSpacing: rs.font(0.2),
   },
 });

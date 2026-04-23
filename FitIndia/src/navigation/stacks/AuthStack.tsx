@@ -4,7 +4,7 @@ import { View, Text } from 'react-native';
 import { AuthStackParamList } from '../../types';
 import { AUTH_ROUTES } from '../../constants';
 import OnBoardingScreen from '../../screens/OnBoardingScreen';
-import { SplashScreen } from '../../screens';
+import { LoginScreen, SplashScreen } from '../../screens';
 
 const Placeholder: FC = ({ route }: any) => (
   <View
@@ -32,7 +32,7 @@ const AuthStack: FC = () => {
         name={AUTH_ROUTES.ONBOARDING}
         component={OnBoardingScreen}
       />
-      <Stack.Screen name={AUTH_ROUTES.LOGIN} component={Placeholder} />
+      <Stack.Screen name={AUTH_ROUTES.LOGIN} component={LoginScreen} />
       <Stack.Screen
         name={AUTH_ROUTES.REGISTER}
         component={Placeholder}

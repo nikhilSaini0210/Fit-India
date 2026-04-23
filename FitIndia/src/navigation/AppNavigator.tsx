@@ -11,6 +11,7 @@ import {
   selectIsLoggedIn,
   selectProfileComplete,
   useAuthStore,
+  useIsDark,
 } from '../store';
 import { replayOfflineQueue, setInterceptorCallbacks } from '../services/api';
 import { RootStackParamList } from '../types';
@@ -29,6 +30,7 @@ const resetToAuth = async () => {
 const Root = createNativeStackNavigator<RootStackParamList>();
 
 export const AppNavigator = () => {
+  const isDark = useIsDark();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
   const { logout, setTokens } = useAuthStore();
@@ -100,7 +102,7 @@ export const AppNavigator = () => {
       }}
     >
       <StatusBar
-        barStyle={isLoggedIn ? 'dark-content' : 'light-content'}
+        barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor="transparent"
         translucent
       />

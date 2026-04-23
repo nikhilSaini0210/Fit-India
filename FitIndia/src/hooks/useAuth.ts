@@ -22,8 +22,9 @@ export const useAuth = () => {
         return { ok: true, needsProfile: !user.profileComplete };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Login failed';
+        const code = isAppError(e) ? e.code : 'UNKNOWN';
         setError(msg);
-        return { ok: false, error: msg };
+        return { ok: false, error: msg, code };
       } finally {
         setLoading(false);
       }
@@ -42,8 +43,9 @@ export const useAuth = () => {
         return { ok: true };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Registration failed';
+        const code = isAppError(e) ? e.code : 'UNKNOWN';
         setError(msg);
-        return { ok: false, error: msg };
+        return { ok: false, error: msg, code };
       } finally {
         setLoading(false);
       }

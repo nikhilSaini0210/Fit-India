@@ -5,6 +5,7 @@ import { StyleSheet } from 'react-native';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { enableScreens } from 'react-native-screens';
 import { ErrorBoundary, OfflineBanner } from './src/components';
+import { ModalProvider, ToastProvider } from './src/context';
 
 enableScreens();
 
@@ -13,8 +14,12 @@ export default function App() {
     <ErrorBoundary>
       <GestureHandlerRootView style={styles.root}>
         <SafeAreaProvider>
-          <AppNavigator />
-          <OfflineBanner />
+          <ToastProvider>
+            <ModalProvider>
+              <AppNavigator />
+              <OfflineBanner />
+            </ModalProvider>
+          </ToastProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ErrorBoundary>

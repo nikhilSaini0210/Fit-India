@@ -6,7 +6,16 @@ const brand = {
   secondary: '#F97316', // Orange accent
   secondaryLight: '#FB923C',
   secondaryDark: '#EA580C',
-} as const;
+  progressGradient: ['#2e9e18', '#5bb843', '#78cc10'],
+  loading: '#2E9E18',
+  line: '#78cc10',
+  progressBg: '#E5E7EB',
+  white: '#FFFFFF',
+  black: '#000000',
+  dangerA: '#EF4444',
+  dangerB: '#DC2626',
+  whiteTr: 'rgba(255,255,255,0.15)',
+};
 
 // ─── Light theme ──────────────────────────────────────────────────────────────
 export const lightColors = {

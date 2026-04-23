@@ -94,6 +94,10 @@ apiClient.interceptors.response.use(
     const message = data?.message ?? 'Something went wrong';
 
     if (status === HTTP.UNAUTHORIZED && !originalRequest._retry) {
+      if (originalRequest.url?.includes(ENDPOINTS.LOGIN)) {
+        throw createAppError('VALIDATION', message);
+      }
+
       if (originalRequest.url?.includes(ENDPOINTS.REFRESH)) {
         _onForceLogout();
         throw createAppError(

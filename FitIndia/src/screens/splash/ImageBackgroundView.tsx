@@ -2,18 +2,20 @@ import { StyleSheet, ImageBackground } from 'react-native';
 import React, { FC, ReactNode } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { rs } from '../../utils';
+import { useColors, useIsDark } from '../../store';
 interface Props {
   children: ReactNode;
 }
 const ImageBackgroundView: FC<Props> = ({ children }) => {
-  const isDark = false;
+  const isDark = useIsDark();
+  const colors = useColors();
   const backgroundImage = isDark
     ? require('../../assets/images/splashBgDark.png')
     : require('../../assets/images/splashBgLight.png');
   return (
     <ImageBackground
       source={backgroundImage}
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background }]}
       resizeMode="stretch"
     >
       <SafeAreaView style={styles.safe}>{children}</SafeAreaView>
@@ -26,9 +28,13 @@ const styles = StyleSheet.create({
     flex: 1,
     width: rs.screenWidth,
     height: rs.screenHeight,
-    backgroundColor: '#081508',
     overflow: 'hidden',
   },
-  image: { width: '100%', height: '100%' },
-  safe: { flex: 1 },
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+  safe: {
+    flex: 1,
+  },
 });
