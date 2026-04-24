@@ -19,7 +19,11 @@ export const useAuth = () => {
         const { user, accessToken, refreshToken } = res.data.data;
         setAuth(user, { accessToken, refreshToken });
         OnboardingStorage.markComplete();
-        return { ok: true, needsProfile: !user.profileComplete };
+        return {
+          ok: true,
+          needsProfile: !user.profileComplete,
+          msg: res.data.message || 'Logged in successfully.',
+        };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Login failed';
         const code = isAppError(e) ? e.code : 'UNKNOWN';
@@ -40,7 +44,11 @@ export const useAuth = () => {
         const res = await authApi.register({ name, email, password, phone });
         const { user, accessToken, refreshToken } = res.data.data;
         setAuth(user, { accessToken, refreshToken });
-        return { ok: true };
+        return {
+          ok: true,
+          msg:
+            res.data.message || 'Your account has been created successfully.',
+        };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Registration failed';
         const code = isAppError(e) ? e.code : 'UNKNOWN';

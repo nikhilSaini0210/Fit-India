@@ -8,3 +8,5 @@ export { default as Icon } from './ui/Icon';
 export { default as Button } from './ui/Button';
 export { default as Divider } from './ui/Divider';
 export { default as Header } from './ui/Header';
+export { default as Pill } from './ui/Pill';
+export { default as OptionGrid } from './ui/OptionGrid';

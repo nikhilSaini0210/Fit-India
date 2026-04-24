@@ -16,11 +16,12 @@ export const useProfile = () => {
       try {
         const res = await userApi.updateProfile(data);
         updateUser(res.data.data.user);
-        return { ok: true };
+        return { ok: true, msg: 'Profile updated successfully.' };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Profile update failed';
+        const code = isAppError(e) ? e.code : 'UNKNOWN';
         setError(msg);
-        return { ok: false, error: msg };
+        return { ok: false, error: msg, code };
       } finally {
         setLoading(false);
       }
@@ -35,13 +36,14 @@ export const useProfile = () => {
       try {
         await userApi.updateNotifications(prefs);
         updateUser({ notifications: prefs });
-        return { ok: true };
+        return { ok: true, msg: 'Notification settings updated.' };
       } catch (e) {
         const msg = isAppError(e)
           ? e.message
           : 'Failed to update notification settings';
+        const code = isAppError(e) ? e.code : 'UNKNOWN';
         setError(msg);
-        return { ok: false, error: msg };
+        return { ok: false, error: msg, code };
       } finally {
         setLoading(false);
       }

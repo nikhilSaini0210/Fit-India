@@ -14,10 +14,12 @@ import { Button, Header, Input, ScreenWrapper } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { goBack, navigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
+import { useToast } from '../../context';
 
 const RegisterScreen: FC = () => {
   const colors = useColors();
   const { register, loading } = useAuth();
+  const toast = useToast();
   const handleError = useApiError();
 
   const [name, setName] = useState('');
@@ -34,7 +36,7 @@ const RegisterScreen: FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleRegister = async () => {
+  const handleRegister = useCallback(async () => {
     Keyboard.dismiss();
     const isValid = registerValidate({
       name,
@@ -53,15 +55,20 @@ const RegisterScreen: FC = () => {
       password,
       phone || undefined,
     );
-    if (!result.ok) {
+    if (result.ok) {
+      toast({
+        type: 'success',
+        title: 'Account created',
+        message: result.msg || 'Your account has been created successfully.',
+      });
+    } else {
       handleError({
         code: result.code ?? 'UNKNOWN',
         message: result.error ?? 'Registration failed',
         isAppError: true,
       });
-      return;
     }
-  };
+  }, [confirm, email, handleError, name, password, phone, register, toast]);
 
   const handleLogin = useCallback(() => {
     navigate(ROOT_ROUTES.AUTH, {

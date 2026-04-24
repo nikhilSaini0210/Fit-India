@@ -15,11 +15,13 @@ import { getDeviceInfo, navigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
 import { useApiError, useAuth, useStagger } from '../../hooks';
 import { loginValidate } from '../../helper';
+import { useToast } from '../../context';
 
 const LoginScreen: FC = () => {
   const colors = useColors();
   const { login, loading } = useAuth();
   const handleError = useApiError();
+  const toast = useToast();
   const onboarded = OnboardingStorage.isComplete();
   const [av, setAv] = useState<{ appVersion?: string; buildNumber?: string }>({
     appVersion: '1.0.0',
@@ -67,14 +69,20 @@ const LoginScreen: FC = () => {
     if (!isValid) return;
 
     const result = await login(email.trim().toLowerCase(), password);
-    if (!result.ok) {
+    if (result.ok) {
+      toast({
+        type: 'success',
+        title: 'Logged in',
+        message: result.msg || 'Logged in successfully.',
+      });
+    } else {
       handleError({
         code: result.code ?? 'UNKNOWN',
         message: result.error ?? 'Login failed',
         isAppError: true,
       });
     }
-  }, [email, handleError, login, password]);
+  }, [email, handleError, login, password, toast]);
 
   return (
     <ScreenWrapper scroll keyboard padding edges={['top']}>

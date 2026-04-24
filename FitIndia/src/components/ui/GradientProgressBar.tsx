@@ -42,7 +42,7 @@ const GradientProgressBar: React.FC<Props> = ({
 
   const widthInterpolate = animatedValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
+    outputRange: ['20%', '100%'],
   });
 
   return (
