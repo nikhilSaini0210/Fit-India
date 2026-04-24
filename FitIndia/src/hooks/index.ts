@@ -30,3 +30,4 @@ export {
   useStagger,
   useRotate,
 } from './useAnimations';
+export { useOnboarding } from './useOnboarding';

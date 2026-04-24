@@ -2,11 +2,11 @@ import React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StyleSheet } from 'react-native';
-import { AppNavigator } from './src/navigation/AppNavigator';
 import { enableScreens } from 'react-native-screens';
 import { ErrorBoundary, OfflineBanner } from './src/components';
 import { ModalProvider, ToastProvider } from './src/context';
 import { useColors } from './src/store';
+import { RootApp } from './src/navigation';
 
 enableScreens();
 
@@ -19,7 +19,7 @@ const App = () => {
         <SafeAreaProvider>
           <ToastProvider>
             <ModalProvider>
-              <AppNavigator />
+              <RootApp />
               <OfflineBanner />
             </ModalProvider>
           </ToastProvider>

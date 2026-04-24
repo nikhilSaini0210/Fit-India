@@ -6,7 +6,6 @@ import type {
 } from '@react-navigation/native';
 
 export type AuthStackParamList = {
-  Splash: undefined;
   Onboarding: undefined;
   Login: { redirectTo?: string } | undefined;
   Register: undefined;

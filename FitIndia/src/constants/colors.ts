@@ -67,6 +67,23 @@ export const lightColors = {
   shadow: '#000000',
   shimmer: '#F1F5F9',
   shimmerHighlight: '#FFFFFF',
+
+  // onboarding
+  accentColorA: '#16A34A',
+  gradientColorsA: ['#F8FAFC', '#ECFDF5', '#F0FDF4'] as string[],
+  accentColorB: '#EA580C',
+  gradientColorsB: ['#FFF7ED', '#FFEDD5', '#FFFBF7'] as string[],
+  accentColorC: '#7C3AED',
+  gradientColorsC: ['#FAF5FF', '#F3E8FF', '#FFFFFF'] as string[],
+  accentColorD: '#0891B2',
+  gradientColorsD: ['#F0FDFF', '#E0F7FA', '#FFFFFF'] as string[],
+  accentColorE: '#CA8A04',
+  gradientColorsE: ['#FFFBEB', '#FEF3C7', '#FFFFFF'] as string[],
+  iconSecondary: 'rgba(0,0,0,0.55)',
+  textHighEmphasis: 'rgba(0,0,0,0.72)',
+  borderSubtle: 'rgba(0,0,0,0.2)',
+  iconPrimary: 'rgba(0,0,0,0.8)',
+  textStrong: 'rgba(0,0,0,0.4)',
 };
 
 // ─── Dark theme ───────────────────────────────────────────────────────────────
@@ -117,6 +134,23 @@ export const darkColors = {
   shadow: '#000000',
   shimmer: '#1E293B',
   shimmerHighlight: '#334155',
+
+  // onboarding
+  accentColorA: '#22C55E',
+  gradientColorsA: ['#0F172A', '#0D2318', '#0A1A0F'] as string[],
+  accentColorB: '#F97316',
+  gradientColorsB: ['#0F172A', '#1A0D06', '#0F0A02'] as string[],
+  accentColorC: '#8B5CF6',
+  gradientColorsC: ['#0F172A', '#120D1A', '#0C0A12'] as string[],
+  accentColorD: '#06B6D4',
+  gradientColorsD: ['#0F172A', '#071318', '#050F13'] as string[],
+  accentColorE: '#EAB308',
+  gradientColorsE: ['#0F172A', '#141006', '#0F0C03'] as string[],
+  iconSecondary: 'rgba(255,255,255,0.55)',
+  textHighEmphasis: 'rgba(255,255,255,0.72)',
+  borderSubtle: 'rgba(255,255,255,0.2)',
+  iconPrimary: 'rgba(255,255,255,0.8)',
+  textStrong: 'rgba(255,255,255,0.4)',
 };
 
 export type AppColors = typeof lightColors;

@@ -23,3 +23,4 @@ export {
 } from './ui/Loader';
 export { Card, StatCard } from './ui/Card';
 export { default as Badge } from './ui/Badge';
+export { StepProgressBar, StepDots } from './ui/StepProgressBar';

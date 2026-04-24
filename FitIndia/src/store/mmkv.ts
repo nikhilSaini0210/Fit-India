@@ -102,12 +102,3 @@ export const RawTokens = {
     storage.remove(STORAGE_KEYS.REFRESH_TOKEN);
   },
 };
-
-export const OnboardingStorage = {
-  isComplete: (): boolean =>
-    storage.getBoolean(STORAGE_KEYS.ONBOARDING_DONE) ?? false,
-  markComplete: (): void => storage.set(STORAGE_KEYS.ONBOARDING_DONE, true),
-  reset: (): void => {
-    storage.remove(STORAGE_KEYS.ONBOARDING_DONE);
-  },
-};

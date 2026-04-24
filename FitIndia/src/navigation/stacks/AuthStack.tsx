@@ -2,24 +2,27 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { FC } from 'react';
 import { AuthStackParamList } from '../../types';
 import { AUTH_ROUTES } from '../../constants';
-import OnBoardingScreen from '../../screens/OnBoardingScreen';
 import {
   ForgotPasswordScreen,
   LoginScreen,
+  OnBoardingScreen,
   ProfileSetupScreen,
   RegisterScreen,
-  SplashScreen,
 } from '../../screens';
+import { useOnboarding } from '../../hooks';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
 const AuthStack: FC = () => {
+  const { isComplete } = useOnboarding();
+
   return (
     <Stack.Navigator
-      initialRouteName={AUTH_ROUTES.SPLASH}
+      initialRouteName={
+        isComplete() ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING
+      }
       screenOptions={{ headerShown: false, animation: 'fade' }}
     >
-      <Stack.Screen name={AUTH_ROUTES.SPLASH} component={SplashScreen} />
       <Stack.Screen
         name={AUTH_ROUTES.ONBOARDING}
         component={OnBoardingScreen}

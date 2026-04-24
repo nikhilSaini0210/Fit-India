@@ -1,31 +1,33 @@
 import React, { FC, useEffect } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import {
-  OnboardingStorage,
   selectIsLoggedIn,
   selectProfileComplete,
   useAuthStore,
   useColors,
+  useLoadingStep,
 } from '../../store';
 import { resetAndNavigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
 import ImageBackgroundView from './ImageBackgroundView';
 import Features from './Features';
 import { GradientProgressBar, RunningLoader } from '../../components';
+import { useOnboarding } from '../../hooks';
 
 const SplashScreen: FC = () => {
   const colors = useColors();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
+  const loadingSteps = useLoadingStep();
+  const { isComplete } = useOnboarding();
 
   useEffect(() => {
     const resolve = async () => {
       await new Promise<void>(r => setTimeout(r, 600));
 
       if (!isLoggedIn) {
-        const onboarded = OnboardingStorage.isComplete();
         resetAndNavigate(ROOT_ROUTES.AUTH, {
-          screen: onboarded ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.LOGIN,
+          screen: isComplete() ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING,
         });
         return;
       }
@@ -85,7 +87,7 @@ const SplashScreen: FC = () => {
           <View style={styles.loaderWrapper}>
             <View style={styles.loaderView}>
               <GradientProgressBar
-                progress={0.8}
+                progress={loadingSteps}
                 height={12}
                 gradientColors={colors.progressGradient}
               />

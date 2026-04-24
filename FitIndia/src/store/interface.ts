@@ -14,11 +14,14 @@ export interface AuthState {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
+  tokenExpiry: number | null;
   isLoggedIn: boolean;
+  isHydrated: boolean;
   setAuth: (user: User, tokens: AuthTokens) => void;
   setTokens: (tokens: AuthTokens) => void;
   updateUser: (partial: Partial<User>) => void;
   logout: () => void;
+  _onHydrated: () => void;
 }
 
 export interface DietState {

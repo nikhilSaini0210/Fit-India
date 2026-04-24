@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { OnboardingStorage, useAuthStore } from '../store';
+import {  useAuthStore } from '../store';
 import { authApi } from '../services/api';
 import { isAppError } from '../utils';
 
@@ -18,7 +18,6 @@ export const useAuth = () => {
         const res = await authApi.login({ email, password });
         const { user, accessToken, refreshToken } = res.data.data;
         setAuth(user, { accessToken, refreshToken });
-        OnboardingStorage.markComplete();
         return {
           ok: true,
           needsProfile: !user.profileComplete,

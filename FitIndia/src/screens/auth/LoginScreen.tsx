@@ -10,19 +10,19 @@ import {
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { Button, Divider, Input, ScreenWrapper } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
-import { OnboardingStorage, useColors } from '../../store';
 import { getDeviceInfo, navigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
-import { useApiError, useAuth, useStagger } from '../../hooks';
+import { useApiError, useAuth, useOnboarding, useStagger } from '../../hooks';
 import { loginValidate } from '../../helper';
 import { useToast } from '../../context';
+import { useColors } from '../../store';
 
 const LoginScreen: FC = () => {
   const colors = useColors();
   const { login, loading } = useAuth();
   const handleError = useApiError();
   const toast = useToast();
-  const onboarded = OnboardingStorage.isComplete();
+  const { isComplete } = useOnboarding();
   const [av, setAv] = useState<{ appVersion?: string; buildNumber?: string }>({
     appVersion: '1.0.0',
     buildNumber: '1',
@@ -117,7 +117,7 @@ const LoginScreen: FC = () => {
             { color: colors.textPrimary, fontFamily: fonts.Bold },
           ]}
         >
-          {`Welcome ${onboarded ? 'back' : ''} 👋`}
+          {`Welcome ${isComplete() ? 'back' : ''} 👋`}
         </Text>
         <Text
           style={[

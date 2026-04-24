@@ -17,7 +17,7 @@ interface BadgeProps {
   label: string;
   variant?: BadgeVariant;
   icon?: string;
-  style?: ViewStyle;
+  style?: ViewStyle | ViewStyle[];
   small?: boolean;
 }
 
