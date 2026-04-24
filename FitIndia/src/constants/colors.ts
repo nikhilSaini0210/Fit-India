@@ -15,6 +15,8 @@ const brand = {
   dangerA: '#EF4444',
   dangerB: '#DC2626',
   whiteTr: 'rgba(255,255,255,0.15)',
+  premium: '#D97706',
+  premiumLight: '#FBBF24',
 };
 
 // ─── Light theme ──────────────────────────────────────────────────────────────

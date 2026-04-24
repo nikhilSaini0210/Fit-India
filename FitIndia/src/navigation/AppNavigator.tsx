@@ -6,7 +6,6 @@ import {
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar, AppState, type AppStateStatus } from 'react-native';
 import MainTabNavigator from './MainTabNavigator';
-import AuthStack from './stacks/AuthStack';
 import {
   selectIsLoggedIn,
   selectProfileComplete,
@@ -22,6 +21,7 @@ import {
   cleanupPushNotifications,
   initPushNotifications,
 } from '../services/noti';
+import { AuthStack } from './stacks';
 
 const resetToAuth = async () => {
   resetAndNavigate(ROOT_ROUTES.AUTH);
