@@ -6,21 +6,23 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import { AppColors, fonts } from '../constants';
+import { rs } from '../utils';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  Colors: AppColors;
+  fallback?: (err: Error, reset: () => void) => ReactNode;
 }
 interface State {
-  hasError: boolean;
   error: Error | null;
 }
 
 export class ErrorBoundary extends Component<Props, State> {
-  state: State = { hasError: false, error: null };
+  state: State = { error: null };
 
-  static getDerivedStateFromError(error: Error): State {
-    return { hasError: true, error };
+  static getDerivedStateFromError(e: Error): State {
+    return { error: e };
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
@@ -28,31 +30,46 @@ export class ErrorBoundary extends Component<Props, State> {
     console.error('[ErrorBoundary]', error, errorInfo.componentStack);
   }
 
-  reset = () => this.setState({ hasError: false, error: null });
+  reset = () => this.setState({ error: null });
 
-  render(): ReactNode {
-    if (!this.state.hasError) return this.props.children;
-    if (!this.props.fallback) return this.props.fallback;
+  render() {
+    const { error } = this.state;
+    const { children, fallback, Colors } = this.props;
+
+    if (!error) return children;
+    if (fallback) return fallback(error, this.reset);
 
     return (
-      <View style={styles.root}>
+      <View style={[styles.root, { backgroundColor: Colors.background }]}>
         <Text style={styles.emoji}>😕</Text>
-        <Text style={styles.title}>Something went wrong</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: Colors.textPrimary }]}>
+          Something went wrong
+        </Text>
+        <Text style={[styles.subtitle, { color: Colors.textSecondary }]}>
           The app hit an unexpected error. Your data is safe.
         </Text>
         {__DEV__ && (
-          <ScrollView style={styles.devBox}>
-            <Text style={styles.devText}>{this.state.error?.message}</Text>
-            <Text style={styles.devText}>{this.state.error?.stack}</Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            style={[styles.devBox, { backgroundColor: Colors.backgroundCard }]}
+            contentContainerStyle={{ paddingBottom: rs.verticalScale(12) }}
+          >
+            <Text style={[styles.devText, { color: Colors.textSecondary }]}>
+              {this.state.error?.message}
+            </Text>
+            <Text style={[styles.devText, { color: Colors.textSecondary }]}>
+              {this.state.error?.stack}
+            </Text>
           </ScrollView>
         )}
         <TouchableOpacity
-          style={styles.btn}
+          style={[styles.btn, { backgroundColor: Colors.primary }]}
           onPress={this.reset}
           activeOpacity={0.85}
         >
-          <Text style={styles.btnText}>Try again</Text>
+          <Text style={[styles.btnText, { color: Colors.textPrimary }]}>
+            Try again
+          </Text>
         </TouchableOpacity>
       </View>
     );
@@ -62,51 +79,45 @@ export class ErrorBoundary extends Component<Props, State> {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#0F172A',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
+    padding: rs.moderateScale(32),
   },
   emoji: {
-    fontSize: 48,
-    marginBottom: 16,
+    fontSize: rs.font(48),
+    marginBottom: rs.verticalScale(16),
   },
   title: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#F8FAFC',
-    marginBottom: 8,
+    fontSize: rs.font(22),
+    fontFamily: fonts.SemiBold,
+    marginBottom: rs.verticalScale(8),
     textAlign: 'center',
   },
   subtitle: {
-    fontSize: 15,
-    color: '#94A3B8',
+    fontSize: rs.font(15),
+    fontFamily: fonts.Regular,
     textAlign: 'center',
-    lineHeight: 22,
-    marginBottom: 32,
+    lineHeight: rs.verticalScale(22),
+    marginBottom: rs.verticalScale(32),
   },
   devBox: {
-    backgroundColor: '#1E293B',
-    borderRadius: 8,
-    padding: 12,
-    maxHeight: 200,
-    marginBottom: 24,
+    borderRadius: rs.scale(8),
+    padding: rs.moderateScale(12),
+    maxHeight: rs.verticalScale(250),
+    marginBottom: rs.verticalScale(24),
     width: '100%',
   },
   devText: {
-    fontSize: 11,
-    color: '#94A3B8',
-    fontFamily: 'monospace',
+    fontSize: rs.font(11),
+    fontFamily: fonts.Italic,
   },
   btn: {
-    backgroundColor: '#22C55E',
-    borderRadius: 12,
-    paddingVertical: 14,
-    paddingHorizontal: 40,
+    borderRadius: rs.scale(12),
+    paddingVertical: rs.verticalScale(14),
+    paddingHorizontal: rs.moderateScale(40),
   },
   btnText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
-    fontSize: 16,
+    fontFamily: fonts.SemiBold,
+    fontSize: rs.font(16),
   },
 });

@@ -6,12 +6,15 @@ import { AppNavigator } from './src/navigation/AppNavigator';
 import { enableScreens } from 'react-native-screens';
 import { ErrorBoundary, OfflineBanner } from './src/components';
 import { ModalProvider, ToastProvider } from './src/context';
+import { useColors } from './src/store';
 
 enableScreens();
 
-export default function App() {
+const App = () => {
+  const colors = useColors();
+
   return (
-    <ErrorBoundary>
+    <ErrorBoundary Colors={colors}>
       <GestureHandlerRootView style={styles.root}>
         <SafeAreaProvider>
           <ToastProvider>
@@ -24,7 +27,9 @@ export default function App() {
       </GestureHandlerRootView>
     </ErrorBoundary>
   );
-}
+};
+
+export default App;
 
 const styles = StyleSheet.create({
   root: {

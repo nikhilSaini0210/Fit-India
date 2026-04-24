@@ -1,10 +1,13 @@
 import { Animated, StyleSheet, Text } from 'react-native';
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { useIsOnline, useSafeInsets } from '../utils';
+import { rs, useIsOnline, useSafeInsets } from '../utils';
+import { fonts } from '../constants';
+import { useColors } from '../store';
 
 const OfflineBanner: FC = () => {
   const insets = useSafeInsets();
   const height = 44 + insets.top;
+  const colors = useColors();
   const isOnline = useIsOnline();
   const translateY = useRef(new Animated.Value(-height)).current;
 
@@ -42,12 +45,12 @@ const OfflineBanner: FC = () => {
     paddingTop: insets.top,
     height,
     transform: [{ translateY }],
-    backgroundColor: isOnline ? '#22C55E' : '#EF4444',
+    backgroundColor: isOnline ? colors.success : colors.error,
   };
 
   return (
     <Animated.View style={[styles.banner, dynamicStyle]}>
-      <Text style={styles.text}>{visibleText}</Text>
+      <Text style={[styles.text, { color: colors.white }]}>{visibleText}</Text>
     </Animated.View>
   );
 };
@@ -65,8 +68,7 @@ const styles = StyleSheet.create({
     zIndex: 999,
   },
   text: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-    fontSize: 13,
+    fontFamily: fonts.SemiBold,
+    fontSize: rs.font(13),
   },
 });
