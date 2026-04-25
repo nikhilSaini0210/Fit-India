@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import {
   NavigationContainer,
   type NavigationState,
@@ -29,19 +29,18 @@ const resetToAuth = async () => {
 
 const Root = createNativeStackNavigator<RootStackParamList>();
 
-export const AppNavigator = () => {
+interface AppNavigatorProps {
+  onReady?: () => void;
+}
+
+export const AppNavigator: FC<AppNavigatorProps> = ({ onReady }) => {
   const isDark = useIsDark();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
   const { logout, setTokens } = useAuthStore();
   const appState = useRef(AppState.currentState);
 
-  console.log(
-    'AppNavigator: Rendered with isLoggedIn=',
-    isLoggedIn,
-    'profileComplete=',
-    profileComplete,
-  );
+  const isMounted = useRef(false);
 
   useEffect(() => {
     setInterceptorCallbacks({
@@ -60,6 +59,8 @@ export const AppNavigator = () => {
   useEffect(() => {
     if (isLoggedIn) {
       initPushNotifications().catch(() => {});
+    } else {
+      cleanupPushNotifications();
     }
   }, [isLoggedIn]);
 
@@ -86,17 +87,18 @@ export const AppNavigator = () => {
     return () => sub.remove();
   }, []);
 
-  const getInitialRoute = (): keyof RootStackParamList => {
-    if (isLoggedIn && profileComplete) return ROOT_ROUTES.MAIN;
-    return ROOT_ROUTES.AUTH;
-  };
-
   useEffect(() => {
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
+    }
+
     if (!navigationRef.isReady()) return;
-    if (isLoggedIn && !profileComplete) {
-      resetAndNavigate(ROOT_ROUTES.AUTH, { screen: AUTH_ROUTES.PROFILE_SETUP });
-    } else if (isLoggedIn && profileComplete) {
+
+    if (isLoggedIn && profileComplete) {
       resetAndNavigate(ROOT_ROUTES.MAIN);
+    } else if (isLoggedIn && !profileComplete) {
+      resetAndNavigate(ROOT_ROUTES.AUTH, { screen: AUTH_ROUTES.PROFILE_SETUP });
     } else {
       resetAndNavigate(ROOT_ROUTES.AUTH, {
         screen: AUTH_ROUTES.LOGIN,
@@ -104,9 +106,15 @@ export const AppNavigator = () => {
     }
   }, [isLoggedIn, profileComplete]);
 
+  const getInitialRoute = (): keyof RootStackParamList => {
+    if (isLoggedIn && profileComplete) return ROOT_ROUTES.MAIN;
+    return ROOT_ROUTES.AUTH;
+  };
+
   return (
     <NavigationContainer
       ref={navigationRef}
+      onReady={onReady}
       onStateChange={(state: NavigationState | undefined) => {
         if (__DEV__ && state) {
           const route = getActiveRouteName(state);

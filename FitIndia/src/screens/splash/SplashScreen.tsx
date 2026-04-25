@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import React, { FC, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import {
   selectIsLoggedIn,
@@ -14,52 +14,41 @@ import Features from './Features';
 import { GradientProgressBar, RunningLoader } from '../../components';
 import { useOnboarding } from '../../hooks';
 
-const SplashScreen: FC = () => {
+interface SplashScreenProps {
+  canNavigate: boolean;
+}
+
+const SplashScreen: FC<SplashScreenProps> = ({ canNavigate }) => {
   const colors = useColors();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
   const loadingSteps = useLoadingStep();
   const { isComplete } = useOnboarding();
 
+  const hasNavigated = useRef(false);
+
   useEffect(() => {
-    const resolve = async () => {
-      await new Promise<void>(r => setTimeout(r, 600));
+    if (!canNavigate) return;
 
-      console.log(
-        'SplashScreen: Checking auth status...',
-        isLoggedIn,
-        profileComplete,
-      );
+    if (hasNavigated.current) return;
+    hasNavigated.current = true;
 
-      if (!isLoggedIn) {
-        console.log(
-          'SplashScreen: User not logged in, navigating to auth flow',
-        );
-        resetAndNavigate(ROOT_ROUTES.AUTH, {
-          screen: isComplete() ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING,
-        });
-        return;
-      }
+    if (!isLoggedIn) {
+      resetAndNavigate(ROOT_ROUTES.AUTH, {
+        screen: isComplete() ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING,
+      });
+      return;
+    }
 
-      if (!profileComplete) {
-        console.log(
-          'SplashScreen: Profile incomplete, navigating to profile setup',
-        );
-        resetAndNavigate(ROOT_ROUTES.AUTH, {
-          screen: AUTH_ROUTES.PROFILE_SETUP,
-        });
-        return;
-      }
+    if (!profileComplete) {
+      resetAndNavigate(ROOT_ROUTES.AUTH, {
+        screen: AUTH_ROUTES.PROFILE_SETUP,
+      });
+      return;
+    }
 
-      console.log(
-        'SplashScreen: User authenticated and profile complete, navigating to main app',
-      );
-      resetAndNavigate(ROOT_ROUTES.MAIN);
-    };
-
-    resolve();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    resetAndNavigate(ROOT_ROUTES.MAIN);
+  }, [isComplete, isLoggedIn, canNavigate, profileComplete]);
 
   return (
     <ImageBackgroundView>
