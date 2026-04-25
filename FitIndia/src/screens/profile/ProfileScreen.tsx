@@ -1,5 +1,5 @@
 import { Alert, Animated } from 'react-native';
-import React, { FC, useCallback, useEffect } from 'react';
+import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { useAuth, useSlideUp } from '../../hooks';
 import {
   Divider,
@@ -43,7 +43,11 @@ const ProfileScreen: FC = () => {
   const handleLogout = useCallback(() => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       { text: 'Cancel', style: 'cancel' },
-      { text: 'Logout', style: 'destructive', onPress: () => logout() },
+      {
+        text: 'Logout',
+        style: 'destructive',
+        onPress: async () => await logout(),
+      },
     ]);
   }, [logout]);
 
@@ -74,7 +78,10 @@ const ProfileScreen: FC = () => {
     });
   }, []);
 
-  const filled = fields.filter(f => (user as any)[f]).length;
+  const filled = useMemo(
+    () => fields.filter(f => (user as any)?.[f]).length,
+    [user],
+  );
   const pct = Math.round((filled / fields.length) * 100);
 
   return (

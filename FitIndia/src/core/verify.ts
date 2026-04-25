@@ -61,6 +61,15 @@ export const verifyToken = (token: string | null | undefined): TokenResult => {
 };
 
 export const needsRefresh = (token: string | null | undefined): boolean => {
-  const { valid, expiresInMs } = verifyToken(token);
-  return !valid || expiresInMs <= REFRESH_BUFFER_MS;
+  if (!token) return false;
+
+  const result = verifyToken(token);
+
+  if (result.expired) {
+    return true;
+  }
+  if (result.valid && result.expiresInMs <= REFRESH_BUFFER_MS) {
+    return true;
+  }
+  return false;
 };

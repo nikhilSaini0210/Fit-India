@@ -1,7 +1,8 @@
 import { useCallback, useState } from 'react';
-import {  useAuthStore } from '../store';
+import { useAuthStore } from '../store';
 import { authApi } from '../services/api';
 import { isAppError } from '../utils';
+import { logoutFn } from '../core';
 
 export const useAuth = () => {
   const { setAuth, logout: storeLogout } = useAuthStore();
@@ -63,7 +64,7 @@ export const useAuth = () => {
   const logout = useCallback(async () => {
     setLoading(true);
     try {
-      await authApi.logout();
+      await logoutFn();
     } catch {
       // Ignore — we're logging out regardless
     } finally {

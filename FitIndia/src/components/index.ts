@@ -28,3 +28,5 @@ export { universalStyles } from './styles/universalStyles';
 export { default as Section } from './ui/Section';
 export { default as MenuItem } from './ui/MenuItem';
 export { default as VersionFooter } from './ui/VersionFooter';
+export { default as ChipGroup } from './ui/ChipGroup';
+export { default as TagInput } from './ui/TagInput';

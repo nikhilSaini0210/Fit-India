@@ -1,11 +1,20 @@
 import { Appearance } from 'react-native';
 import { useAppStore, useAuthStore } from '../store';
-import { cancelRefresh, scheduleRefresh, verifyToken } from '../core';
+import {
+  cancelRefresh,
+  doRefresh,
+  logoutFn,
+  scheduleRefresh,
+  verifyToken,
+} from '../core';
 import { authApi } from '../services/api';
 import { logger } from '../utils';
 
 const MIN_SPLASH_MS = 4500;
 const API_TIMEOUT = 8000;
+
+const isAuthError = (err: any) =>
+  err?.code === 'SESSION_EXPIRED' || err?.response?.status === 401;
 
 const withTimeout = <T>(promise: Promise<T>, ms = API_TIMEOUT) =>
   Promise.race([
@@ -34,8 +43,7 @@ export const initializeApp = async (): Promise<void> => {
 
       setLoadingStep(0.2);
 
-      const { accessToken, refreshToken, setTokens, logout } =
-        useAuthStore.getState();
+      const { accessToken, refreshToken } = useAuthStore.getState();
 
       logger.debug('Tokens received', {
         tag: 'Auth',
@@ -49,43 +57,55 @@ export const initializeApp = async (): Promise<void> => {
         const { valid } = verifyToken(accessToken);
 
         if (valid) {
+          logger.info('Token valid (local check)', { tag: 'Init' });
+
           if (refreshToken) {
             scheduleRefresh(accessToken, async () => {
-              await authApi.refresh(refreshToken);
+              await doRefresh();
             });
           }
+
           setLoadingStep(0.4);
+
           logger.info('Token valid', { tag: 'Init' });
         } else {
           if (!refreshToken) {
             cancelRefresh();
-            logout();
+            await logoutFn().catch(() => {});
             return;
           }
 
-          const res = await withTimeout(authApi.refresh(refreshToken));
-          logger.debug('Refresh token received', {
+          logger.info('Access expired → refreshing', { tag: 'Init' });
+
+          await withTimeout(doRefresh());
+
+          logger.debug('New tokens received', {
             tag: 'Auth',
             data: {
+              accessToken: accessToken?.slice(0, 10) + '...',
               refreshToken: refreshToken?.slice(0, 10) + '...',
             },
           });
-          const data = res.data?.data;
-          if (!data?.accessToken) throw new Error('Invalid refresh');
 
-          setTokens({
-            accessToken: data.accessToken,
-            refreshToken: data.refreshToken,
-          });
           setLoadingStep(0.4);
         }
       } else {
         setLoadingStep(0.4);
       }
-    } catch (err) {
+    } catch (err: any) {
       cancelRefresh();
-      useAuthStore.getState().logout();
-      logger.warn('Token step failed', { tag: 'Init', data: err });
+
+      logger.warn('Token step failed', {
+        tag: 'Init',
+        data: {
+          message: err?.message,
+          code: err?.code,
+          status: err?.response?.status,
+        },
+      });
+      if (isAuthError(err)) {
+        await logoutFn().catch(() => {});
+      }
     }
 
     try {
@@ -101,7 +121,9 @@ export const initializeApp = async (): Promise<void> => {
       const res = await withTimeout(authApi.getMe());
 
       const user = res.data?.data?.user;
-      if (!user) throw new Error('Invalid user');
+      if (!user) {
+        throw new Error('Invalid user');
+      }
 
       setAuth(user, {
         accessToken: accessToken ?? '',
@@ -110,10 +132,18 @@ export const initializeApp = async (): Promise<void> => {
 
       setLoadingStep(0.7);
       logger.info('User loaded', { tag: 'Init' });
-    } catch {
-      await authApi.logout().catch(() => {});
-      useAuthStore.getState().logout();
-      logger.warn('User fetch failed → logout', { tag: 'Init' });
+    } catch (err: any) {
+      logger.warn('User fetch failed', {
+        tag: 'Init',
+        data: {
+          message: err?.message,
+          status: err?.response?.status,
+        },
+      });
+
+      if (isAuthError(err)) {
+        await logoutFn().catch(() => {});
+      }
     }
   };
 

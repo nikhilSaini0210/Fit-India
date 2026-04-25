@@ -3,14 +3,8 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 import { AuthState } from './interface';
 import { RawTokens, zustandMMKVStorage } from './mmkv';
 import { STORAGE_KEYS } from '../constants';
-import { cancelRefresh, scheduleRefresh, verifyToken } from '../core';
-import { authApi } from '../services/api';
+import { cancelRefresh, startRefreshScheduler, verifyToken } from '../core';
 import { logger } from '../utils';
-
-const doRefresh = async (r: string | null) => {
-  if (!r) throw new Error('No refresh token');
-  await authApi.refresh(r);
-};
 
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -39,15 +33,8 @@ export const useAuthStore = create<AuthState>()(
           isLoggedIn: true,
           tokenExpiry: payload.exp * 1000,
         });
-        if (refreshToken) {
-          scheduleRefresh(accessToken, async () => {
-            try {
-              await doRefresh(refreshToken);
-            } catch {
-              get().logout();
-            }
-          });
-        }
+
+        startRefreshScheduler();
 
         return true;
       },
@@ -63,15 +50,9 @@ export const useAuthStore = create<AuthState>()(
         }
         RawTokens.set(accessToken, refreshToken);
         set({ accessToken, refreshToken, tokenExpiry: payload.exp * 1000 });
-        if (refreshToken) {
-          scheduleRefresh(accessToken, async () => {
-            try {
-              await doRefresh(refreshToken);
-            } catch {
-              get().logout();
-            }
-          });
-        }
+
+        startRefreshScheduler();
+
         return true;
       },
 
@@ -90,6 +71,7 @@ export const useAuthStore = create<AuthState>()(
           tokenExpiry: null,
           isLoggedIn: false,
         });
+        logger.info('User logged out', { tag: 'AuthStore' });
       },
 
       _onHydrated: () => set({ isHydrated: true }),
@@ -109,13 +91,9 @@ export const useAuthStore = create<AuthState>()(
         const { valid } = verifyToken(state.accessToken);
         if (valid) {
           state.isLoggedIn = true;
-          scheduleRefresh(state.accessToken, async () => {
-            try {
-              await doRefresh(state.refreshToken);
-            } catch {
-              state.logout();
-            }
-          });
+          setTimeout(() => {
+            startRefreshScheduler();
+          }, 0);
         } else {
           state.accessToken =
             state.refreshToken =

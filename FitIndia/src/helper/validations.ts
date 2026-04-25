@@ -48,3 +48,33 @@ export const registerValidate = ({
   setErrors(e);
   return Object.keys(e).length === 0;
 };
+
+export const updateValidate = ({
+  name,
+  age,
+  phone,
+  weight,
+  height,
+  setErrors,
+}: {
+  name: string;
+  age: string;
+  phone: string;
+  weight: string;
+  height: string;
+  setErrors: (e: Record<string, string>) => void;
+}) => {
+  const e: Record<string, string> = {};
+
+  if (!name.trim()) e.name = 'Name is required';
+  if (age && (isNaN(+age) || +age < 10 || +age > 100))
+    e.age = 'Enter a valid age (10–100)';
+  if (weight && (isNaN(+weight) || +weight < 20))
+    e.weight = 'Enter a valid weight';
+  if (height && (isNaN(+height) || +height < 100))
+    e.height = 'Enter a valid height';
+  if (phone && !/^[6-9]\d{9}$/.test(phone))
+    e.phone = 'Enter a valid 10-digit Indian number';
+  setErrors(e);
+  return Object.keys(e).length === 0;
+};

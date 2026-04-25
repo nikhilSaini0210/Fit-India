@@ -12,6 +12,17 @@ import { createAppError, logger } from '../../utils';
 import { ApiResponse } from './interfaces';
 import { AuthTokens } from '../../types';
 
+let isConnected = true;
+let unsubscribeNetInfo: (() => void) | null = null;
+
+export const initNetworkListener = () => {
+  if (unsubscribeNetInfo) return;
+
+  unsubscribeNetInfo = NetInfo.addEventListener(state => {
+    isConnected = !!state.isConnected;
+  });
+};
+
 let isRefreshing = false;
 let waitingQueue: Array<{
   resolve: (token: string) => void;
@@ -50,8 +61,7 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    const net = await NetInfo.fetch();
-    if (!net.isConnected) {
+    if (!isConnected) {
       const method = config.method?.toLowerCase() ?? '';
       if (['post', 'put', 'patch', 'delete'].includes(method)) {
         enqueueOffline({
@@ -134,6 +144,9 @@ apiClient.interceptors.response.use(
       }
 
       try {
+        logger.info('Refreshing token...', { tag: 'Auth' });
+        logger.debug(`Queue length: ${waitingQueue.length}`, { tag: 'Auth' });
+
         const { data: refreshData } = await axios.post<ApiResponse<AuthTokens>>(
           `${API_BASE_URL}${ENDPOINTS.REFRESH}`,
           { refreshToken },
@@ -143,7 +156,8 @@ apiClient.interceptors.response.use(
         const { accessToken, refreshToken: newRefreshToken } = refreshData.data;
 
         RawTokens.set(accessToken, newRefreshToken);
-        _onTokensRefreshed(accessToken, newRefreshToken);
+
+        await Promise.resolve(_onTokensRefreshed(accessToken, newRefreshToken));
 
         flushQueue(accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;

@@ -93,10 +93,12 @@ const Header: FC<HeaderProps> = ({
           <Pressable
             onPress={onRightPress}
             hitSlop={12}
-            style={[
-              s.iconBtn,
-              rightLabel ? s.labelBtn : undefined,
-              { backgroundColor: colors.backgroundSurface },
+            style={({ pressed }) => [
+              s.actionBtn,
+              {
+                backgroundColor: colors.backgroundSurface,
+                opacity: pressed ? 0.5 : 1,
+              },
             ]}
           >
             {rightIcon ? (
@@ -108,6 +110,7 @@ const Header: FC<HeaderProps> = ({
               />
             ) : (
               <Text
+                numberOfLines={1}
                 style={[
                   s.rightLabel,
                   { color: colors.primary, fontFamily: fonts.SemiBold },
@@ -137,8 +140,14 @@ const s = StyleSheet.create({
     width: rs.scale(44),
     alignItems: 'flex-start',
   },
-  center: { flex: 1, alignItems: 'center' },
-  right: { width: rs.scale(44), alignItems: 'flex-end' },
+  center: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  right: {
+    minWidth: rs.scale(44),
+    alignItems: 'flex-end',
+  },
   title: {
     fontSize: rs.font(17),
   },
@@ -150,14 +159,17 @@ const s = StyleSheet.create({
     width: rs.scale(36),
     height: rs.scale(36),
     borderRadius: rs.scale(10),
-    // alignItems: 'center',
     justifyContent: 'center',
   },
-  labelBtn: {
-    width: 'auto',
+  actionBtn: {
     paddingHorizontal: rs.scale(10),
+    height: rs.scale(36),
+    borderRadius: rs.scale(10),
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   rightLabel: {
     fontSize: rs.font(14),
+    includeFontPadding: false,
   },
 });

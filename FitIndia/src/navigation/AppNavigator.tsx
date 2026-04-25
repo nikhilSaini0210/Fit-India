@@ -22,6 +22,7 @@ import {
   initPushNotifications,
 } from '../services/noti';
 import { AuthStack } from './stacks';
+import { doRefresh, logoutFn, needsRefresh } from '../core';
 
 const resetToAuth = async () => {
   resetAndNavigate(ROOT_ROUTES.AUTH);
@@ -37,15 +38,15 @@ export const AppNavigator: FC<AppNavigatorProps> = ({ onReady }) => {
   const isDark = useIsDark();
   const isLoggedIn = useAuthStore(selectIsLoggedIn);
   const profileComplete = useAuthStore(selectProfileComplete);
-  const { logout, setTokens } = useAuthStore();
+  const { setTokens } = useAuthStore();
   const appState = useRef(AppState.currentState);
 
   const isMounted = useRef(false);
 
   useEffect(() => {
     setInterceptorCallbacks({
-      onForceLogout: () => {
-        logout();
+      onForceLogout: async () => {
+        await logoutFn().catch(() => {});
         cleanupPushNotifications();
         resetToAuth();
       },
@@ -74,16 +75,27 @@ export const AppNavigator: FC<AppNavigatorProps> = ({ onReady }) => {
   }, []);
 
   useEffect(() => {
-    const sub = AppState.addEventListener('change', (next: AppStateStatus) => {
-      const wasBackground =
-        appState.current.match(/inactive|background/) && next === 'active';
-      appState.current = next;
+    const sub = AppState.addEventListener(
+      'change',
+      async (next: AppStateStatus) => {
+        const wasBackground =
+          appState.current.match(/inactive|background/) && next === 'active';
+        appState.current = next;
 
-      if (wasBackground) {
-        // Next API call will trigger refresh if token expired while backgrounded.
-        // The interceptor handles it silently — nothing explicit needed here.
-      }
-    });
+        logger.info(`App resumed → checking token: ${next}`, {
+          tag: 'AppState',
+        });
+
+        if (wasBackground) {
+          const { accessToken } = useAuthStore.getState();
+          if (accessToken && needsRefresh(accessToken)) {
+            await doRefresh().catch(() => {
+              logger.warn('Resume refresh failed', { tag: 'AppState' });
+            });
+          }
+        }
+      },
+    );
     return () => sub.remove();
   }, []);
 

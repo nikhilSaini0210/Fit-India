@@ -29,7 +29,11 @@ export class ErrorBoundary extends Component<Props, State> {
     // TODO: send to Sentry / Crashlytics
     logger.error('Unhandled render error', {
       tag: 'ErrorBoundary',
-      data: { error, componentStack: errorInfo.componentStack },
+      data: {
+        message: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
+      },
     });
   }
 
