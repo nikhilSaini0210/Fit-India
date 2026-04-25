@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { ProfileStackParamList } from '../../types';
 import { View, Text } from 'react-native';
 import { PROFILE_ROUTES } from '../../constants';
+import { ProfileScreen } from '../../screens';
 
 const Placeholder = ({ route }: any) => (
   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -14,7 +15,7 @@ const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
 const ProfileStack: FC = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name={PROFILE_ROUTES.PROFILE} component={Placeholder} />
+    <Stack.Screen name={PROFILE_ROUTES.PROFILE} component={ProfileScreen} />
     <Stack.Screen name={PROFILE_ROUTES.EDIT_PROFILE} component={Placeholder} />
     <Stack.Screen name={PROFILE_ROUTES.NOTIFICATIONS} component={Placeholder} />
     <Stack.Screen

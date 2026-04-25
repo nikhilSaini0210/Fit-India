@@ -36,6 +36,13 @@ export const AppNavigator = () => {
   const { logout, setTokens } = useAuthStore();
   const appState = useRef(AppState.currentState);
 
+  console.log(
+    'AppNavigator: Rendered with isLoggedIn=',
+    isLoggedIn,
+    'profileComplete=',
+    profileComplete,
+  );
+
   useEffect(() => {
     setInterceptorCallbacks({
       onForceLogout: () => {
@@ -88,6 +95,12 @@ export const AppNavigator = () => {
     if (!navigationRef.isReady()) return;
     if (isLoggedIn && !profileComplete) {
       resetAndNavigate(ROOT_ROUTES.AUTH, { screen: AUTH_ROUTES.PROFILE_SETUP });
+    } else if (isLoggedIn && profileComplete) {
+      resetAndNavigate(ROOT_ROUTES.MAIN);
+    } else {
+      resetAndNavigate(ROOT_ROUTES.AUTH, {
+        screen: AUTH_ROUTES.LOGIN,
+      });
     }
   }, [isLoggedIn, profileComplete]);
 

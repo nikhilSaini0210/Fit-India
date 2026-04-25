@@ -25,7 +25,16 @@ const SplashScreen: FC = () => {
     const resolve = async () => {
       await new Promise<void>(r => setTimeout(r, 600));
 
+      console.log(
+        'SplashScreen: Checking auth status...',
+        isLoggedIn,
+        profileComplete,
+      );
+
       if (!isLoggedIn) {
+        console.log(
+          'SplashScreen: User not logged in, navigating to auth flow',
+        );
         resetAndNavigate(ROOT_ROUTES.AUTH, {
           screen: isComplete() ? AUTH_ROUTES.LOGIN : AUTH_ROUTES.ONBOARDING,
         });
@@ -33,12 +42,18 @@ const SplashScreen: FC = () => {
       }
 
       if (!profileComplete) {
+        console.log(
+          'SplashScreen: Profile incomplete, navigating to profile setup',
+        );
         resetAndNavigate(ROOT_ROUTES.AUTH, {
           screen: AUTH_ROUTES.PROFILE_SETUP,
         });
         return;
       }
 
+      console.log(
+        'SplashScreen: User authenticated and profile complete, navigating to main app',
+      );
       resetAndNavigate(ROOT_ROUTES.MAIN);
     };
 
