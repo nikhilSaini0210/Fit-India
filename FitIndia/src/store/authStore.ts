@@ -5,6 +5,7 @@ import { RawTokens, zustandMMKVStorage } from './mmkv';
 import { STORAGE_KEYS } from '../constants';
 import { cancelRefresh, scheduleRefresh, verifyToken } from '../core';
 import { authApi } from '../services/api';
+import { logger } from '../utils';
 
 const doRefresh = async (r: string | null) => {
   if (!r) throw new Error('No refresh token');
@@ -24,7 +25,10 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (user, { accessToken, refreshToken }) => {
         const { valid, payload, error } = verifyToken(accessToken);
         if (!valid || !payload) {
-          console.warn('[AuthStore] setAuth rejected:', error);
+          logger.warn('setAuth rejected', {
+            tag: 'AuthStore',
+            data: error,
+          });
           return false;
         }
         RawTokens.set(accessToken, refreshToken);
@@ -51,7 +55,10 @@ export const useAuthStore = create<AuthState>()(
       setTokens: ({ accessToken, refreshToken }) => {
         const { valid, payload, error } = verifyToken(accessToken);
         if (!valid || !payload) {
-          console.warn('[AuthStore] setTokens rejected:', error);
+          logger.warn('setTokens rejected', {
+            tag: 'AuthStore',
+            data: error,
+          });
           return false;
         }
         RawTokens.set(accessToken, refreshToken);

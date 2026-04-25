@@ -24,3 +24,7 @@ export {
 export { Card, StatCard } from './ui/Card';
 export { default as Badge } from './ui/Badge';
 export { StepProgressBar, StepDots } from './ui/StepProgressBar';
+export { universalStyles } from './styles/universalStyles';
+export { default as Section } from './ui/Section';
+export { default as MenuItem } from './ui/MenuItem';
+export { default as VersionFooter } from './ui/VersionFooter';

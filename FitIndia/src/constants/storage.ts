@@ -1,3 +1,5 @@
+import RNConfig from 'react-native-config';
+
 export const STORAGE_KEYS = {
   AUTH_STORE: 'fitindia-auth',
   DIET_STORE: 'fitindia-diet',
@@ -6,7 +8,7 @@ export const STORAGE_KEYS = {
   APP_STORE: 'fitindia-app',
 
   STORE_ID: 'fitindia.store',
-  STORE_KEY: 'bhfg#jfi&HgAu*nsii@FjAE&nfej#nd',
+  STORE_KEY: RNConfig.ENCRYPTION_KEY,
 
   ACCESS_TOKEN: 'auth.accessToken',
   REFRESH_TOKEN: 'auth.refreshToken',

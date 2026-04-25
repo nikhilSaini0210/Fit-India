@@ -8,9 +8,9 @@ import {
   View,
 } from 'react-native';
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { Button, Divider, Input, ScreenWrapper } from '../../components';
+import { Button, Divider, Input, ScreenWrapper, VersionFooter } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
-import { getDeviceInfo, navigate, rs } from '../../utils';
+import {  navigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
 import { useApiError, useAuth, useOnboarding, useStagger } from '../../hooks';
 import { loginValidate } from '../../helper';
@@ -23,10 +23,7 @@ const LoginScreen: FC = () => {
   const handleError = useApiError();
   const toast = useToast();
   const { isComplete } = useOnboarding();
-  const [av, setAv] = useState<{ appVersion?: string; buildNumber?: string }>({
-    appVersion: '1.0.0',
-    buildNumber: '1',
-  });
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<{ email?: string; password?: string }>(
@@ -36,12 +33,6 @@ const LoginScreen: FC = () => {
   const { anims, start } = useStagger(4, 80, 500);
 
   useEffect(() => {
-    const fetchDeviceInfo = async () => {
-      const { appVersion, buildNumber } = await getDeviceInfo();
-      setAv({ appVersion, buildNumber });
-    };
-
-    fetchDeviceInfo();
     start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -222,14 +213,7 @@ const LoginScreen: FC = () => {
         </TouchableOpacity>
       </Animated.View>
 
-      <Text
-        style={[
-          styles.bottomNote,
-          { color: colors.textTertiary, fontFamily: fonts.Regular },
-        ]}
-      >
-        {`Made in India 🇮🇳 — FitSutra v${av.appVersion} (${av.buildNumber})`}
-      </Text>
+      <VersionFooter />
     </ScreenWrapper>
   );
 };

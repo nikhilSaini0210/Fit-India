@@ -106,3 +106,28 @@ export const getOnboardingSlides = (Colors: AppColors): OnboardingSlide[] => [
     hindi: 'हर दिन, हर कदम',
   },
 ];
+
+export const fields = [
+  'age',
+  'gender',
+  'weight',
+  'height',
+  'goal',
+  'dietType',
+  'activityLevel',
+  'fitnessLevel',
+];
+
+export const goalLabels: Record<string, string> = {
+  weight_loss: 'Weight Loss',
+  weight_gain: 'Weight Gain',
+  muscle_gain: 'Muscle Gain',
+  maintenance: 'Maintenance',
+};
+
+export const dietLabels: Record<string, string> = {
+  veg: 'Vegetarian',
+  non_veg: 'Non-Veg',
+  jain: 'Jain',
+  vegan: 'Vegan',
+};

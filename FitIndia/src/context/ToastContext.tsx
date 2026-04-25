@@ -82,8 +82,8 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                 styles.toast,
                 {
                   opacity: t.anim,
-                  backgroundColor: colors.background,
-                  shadowColor: colors.primary,
+                  backgroundColor: c.bg,
+                  shadowColor: c.bg,
                   transform: [
                     {
                       translateY: t.anim.interpolate({
@@ -98,7 +98,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <View style={[styles.dot, { backgroundColor: c.dot }]} />
               <View style={styles.toastBody}>
                 <Text
-                  style={[styles.toastTitle, { color: colors.textPrimary }]}
+                  style={[styles.toastTitle, { color: c.text }]}
                 >
                   {t.title}
                 </Text>
@@ -128,7 +128,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
                   iconFamily="MaterialCommunityIcons"
                   name="close"
                   size={rs.font(14)}
-                  color={colors.backgroundMuted}
+                  color={colors.iconSecondary}
                 />
               </Pressable>
             </Animated.View>

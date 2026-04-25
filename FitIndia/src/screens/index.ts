@@ -5,3 +5,7 @@ export { default as ForgotPasswordScreen } from './auth/ForgotPasswordScreen';
 export { default as ProfileSetupScreen } from './auth/ProfileSetupScreen';
 export { default as OnBoardingScreen } from './onboarding/OnBoardingScreen';
 export { default as ProfileScreen } from './profile/ProfileScreen';
+export { default as EditProfileScreen } from './profile/EditProfileScreen';
+export { default as NotificationSettingsScreen } from './profile/NotificationSettingsScreen';
+export { default as SubscriptionScreen } from './profile/SubscriptionScreen';
+export { default as AppSettingsScreen } from './profile/AppSettingsScreen';

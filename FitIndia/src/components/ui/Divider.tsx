@@ -7,37 +7,48 @@ import { rs } from '../../utils';
 interface DividerProps {
   label?: string;
   marginV?: number;
+  backgroundColor?: string;
+  height?: number;
+  labelColor?: string;
+  marginL?: number;
 }
 
 const Divider: FC<DividerProps> = ({
   label,
   marginV = rs.verticalScale(20),
+  backgroundColor,
+  height = 0.75,
+  labelColor,
+  marginL = 0,
 }) => {
   const colors = useColors();
+
+  const dividerColor = backgroundColor ?? colors.border;
+  const textColor = labelColor ?? colors.textTertiary;
 
   if (!label) {
     return (
       <View
-        style={[
-          s.line,
-          { backgroundColor: colors.border, marginVertical: marginV },
-        ]}
+        style={{
+          backgroundColor: dividerColor,
+          marginVertical: marginV,
+          height,
+          marginLeft: marginL,
+        }}
       />
     );
   }
 
   return (
-    <View style={[s.row, { marginVertical: marginV }]}>
-      <View style={[s.line, s.flex, { backgroundColor: colors.border }]} />
+    <View style={[s.row, { marginVertical: marginV, marginLeft: marginL }]}>
+      <View style={[s.flex, { backgroundColor: dividerColor, height }]} />
       <Text
-        style={[
-          s.label,
-          { color: colors.textTertiary, fontFamily: fonts.Regular },
-        ]}
+        style={[s.label, { color: textColor, fontFamily: fonts.Regular }]}
+        numberOfLines={1}
       >
         {label}
       </Text>
-      <View style={[s.line, s.flex, { backgroundColor: colors.border }]} />
+      <View style={[s.flex, { backgroundColor: dividerColor, height }]} />
     </View>
   );
 };
@@ -48,7 +59,12 @@ const s = StyleSheet.create({
   flex: {
     flex: 1,
   },
-  line: { height: 0.75 },
-  row: { flexDirection: 'row', alignItems: 'center', gap: rs.scale(12) },
-  label: { fontSize: rs.font(13) },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: rs.scale(12),
+  },
+  label: {
+    fontSize: rs.font(13),
+  },
 });

@@ -14,7 +14,7 @@ import {
 } from '../store';
 import { replayOfflineQueue, setInterceptorCallbacks } from '../services/api';
 import { RootStackParamList } from '../types';
-import { navigationRef, resetAndNavigate } from '../utils';
+import { logger, navigationRef, resetAndNavigate } from '../utils';
 import { AUTH_ROUTES, ROOT_ROUTES } from '../constants';
 import NetInfo from '@react-native-community/netinfo';
 import {
@@ -118,7 +118,7 @@ export const AppNavigator: FC<AppNavigatorProps> = ({ onReady }) => {
       onStateChange={(state: NavigationState | undefined) => {
         if (__DEV__ && state) {
           const route = getActiveRouteName(state);
-          console.log('[NAV]', route);
+          logger.info(`Route: ${route}`, { tag: 'NAV' });
         }
       }}
     >

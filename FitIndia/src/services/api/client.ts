@@ -8,7 +8,7 @@ import axios, {
 import NetInfo from '@react-native-community/netinfo';
 import { API_BASE_URL, API_TIMEOUT_MS, ENDPOINTS, HTTP } from '../../constants';
 import { dequeueAll, enqueueOffline, RawTokens } from '../../store';
-import { createAppError } from '../../utils';
+import { createAppError, logger } from '../../utils';
 import { ApiResponse } from './interfaces';
 import { AuthTokens } from '../../types';
 
@@ -195,5 +195,5 @@ export async function replayOfflineQueue(): Promise<void> {
 
   const failed = results.filter(r => r.status === 'rejected').length;
   if (__DEV__ && failed)
-    console.warn(`[OfflineQueue] ${failed}/${queue.length} failed on replay`);
+    logger.warn(`[OfflineQueue] ${failed}/${queue.length} failed on replay`);
 }

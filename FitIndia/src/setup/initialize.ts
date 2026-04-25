@@ -2,6 +2,7 @@ import { Appearance } from 'react-native';
 import { useAppStore, useAuthStore } from '../store';
 import { cancelRefresh, scheduleRefresh, verifyToken } from '../core';
 import { authApi } from '../services/api';
+import { logger } from '../utils';
 
 const MIN_SPLASH_MS = 4500;
 const API_TIMEOUT = 8000;
@@ -15,7 +16,7 @@ const withTimeout = <T>(promise: Promise<T>, ms = API_TIMEOUT) =>
   ]);
 
 export const initializeApp = async (): Promise<void> => {
-  console.info('[Init] Starting...');
+  logger.info('Starting...', { tag: 'Init' });
 
   const { setLoadingStep } = useAppStore.getState();
 
@@ -29,12 +30,20 @@ export const initializeApp = async (): Promise<void> => {
 
   const runBlocking = async () => {
     try {
-      console.info('[Init] Token validation start.');
+      logger.info('Token validation start', { tag: 'Init' });
 
       setLoadingStep(0.2);
 
       const { accessToken, refreshToken, setTokens, logout } =
         useAuthStore.getState();
+
+      logger.debug('Tokens received', {
+        tag: 'Auth',
+        data: {
+          accessToken: accessToken?.slice(0, 10) + '...',
+          refreshToken: refreshToken?.slice(0, 10) + '...',
+        },
+      });
 
       if (accessToken) {
         const { valid } = verifyToken(accessToken);
@@ -46,7 +55,7 @@ export const initializeApp = async (): Promise<void> => {
             });
           }
           setLoadingStep(0.4);
-          console.info('[Init] Token valid.');
+          logger.info('Token valid', { tag: 'Init' });
         } else {
           if (!refreshToken) {
             cancelRefresh();
@@ -55,7 +64,12 @@ export const initializeApp = async (): Promise<void> => {
           }
 
           const res = await withTimeout(authApi.refresh(refreshToken));
-
+          logger.debug('Refresh token received', {
+            tag: 'Auth',
+            data: {
+              refreshToken: refreshToken?.slice(0, 10) + '...',
+            },
+          });
           const data = res.data?.data;
           if (!data?.accessToken) throw new Error('Invalid refresh');
 
@@ -68,10 +82,10 @@ export const initializeApp = async (): Promise<void> => {
       } else {
         setLoadingStep(0.4);
       }
-    } catch {
+    } catch (err) {
       cancelRefresh();
       useAuthStore.getState().logout();
-      console.warn('[Init] Token step failed');
+      logger.warn('Token step failed', { tag: 'Init', data: err });
     }
 
     try {
@@ -95,11 +109,11 @@ export const initializeApp = async (): Promise<void> => {
       });
 
       setLoadingStep(0.7);
-      console.info('[Init] User loaded.');
+      logger.info('User loaded', { tag: 'Init' });
     } catch {
       await authApi.logout().catch(() => {});
       useAuthStore.getState().logout();
-      console.warn('[Init] User fetch failed → logout.');
+      logger.warn('User fetch failed → logout', { tag: 'Init' });
     }
   };
 
@@ -112,10 +126,8 @@ export const initializeApp = async (): Promise<void> => {
       })(),
     ]);
   } catch (err) {
-    console.error('[Init] Blocking phase error:', err);
+    logger.error('Blocking phase error', { tag: 'Init', data: err });
   }
-
-  console.info('[Init] Splash can be dismissed.');
 
   Promise.allSettled([
     (async () => {
@@ -131,11 +143,14 @@ export const initializeApp = async (): Promise<void> => {
       }
       // i18n.changeLanguage(language);
 
-      console.info(`[Init] Settings applied — theme:${theme} lang:${language}`);
+      logger.info('Settings applied', {
+        tag: 'Init',
+        data: { theme, language },
+      });
     })(),
   ]);
 
   setLoadingStep(0.9);
 
-  console.info('[Init] Done.');
+  logger.info('Done', { tag: 'Init' });
 };

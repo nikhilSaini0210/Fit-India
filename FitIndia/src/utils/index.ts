@@ -4,3 +4,4 @@ export * from './navigationUtils';
 export * from './rsUtils';
 export * from './safeInsetsUtils';
 export * from './deviceInfoUtils';
+export { logger } from './logger';

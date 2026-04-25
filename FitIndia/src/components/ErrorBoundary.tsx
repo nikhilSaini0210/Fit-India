@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import { AppColors, fonts } from '../constants';
-import { rs } from '../utils';
+import { logger, rs } from '../utils';
 
 interface Props {
   children: ReactNode;
@@ -27,7 +27,10 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     // TODO: send to Sentry / Crashlytics
-    console.error('[ErrorBoundary]', error, errorInfo.componentStack);
+    logger.error('Unhandled render error', {
+      tag: 'ErrorBoundary',
+      data: { error, componentStack: errorInfo.componentStack },
+    });
   }
 
   reset = () => this.setState({ error: null });

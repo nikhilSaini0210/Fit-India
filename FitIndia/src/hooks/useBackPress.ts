@@ -1,5 +1,6 @@
 import { useEffect, useCallback, useRef } from 'react';
 import { BackHandler } from 'react-native';
+import { logger } from '../utils';
 
 export type BackPressHandler = () => boolean | null | undefined;
 
@@ -28,7 +29,10 @@ export function useBackPress({
       return result === true;
     } catch (error) {
       if (__DEV__) {
-        console.error('[useBackPress] Handler threw an error:', error);
+        logger.error('Handler threw an error', {
+          tag: 'BackPress',
+          data: error,
+        });
       }
       return false;
     }

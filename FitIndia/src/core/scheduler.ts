@@ -1,3 +1,4 @@
+import { logger } from '../utils';
 import { REFRESH_BUFFER_MS } from './contants';
 import { verifyToken } from './verify';
 
@@ -17,13 +18,13 @@ export const scheduleRefresh = (
   }
 
   const delay = Math.max(0, expiresInMs - REFRESH_BUFFER_MS);
-  console.info(`[Scheduler] Token refresh in ${Math.round(delay / 1_000)}s`);
+  logger.info(`[Scheduler] Token refresh in ${Math.round(delay / 1_000)}s`);
 
   timerId = setTimeout(async () => {
     try {
       await onRefresh();
     } catch (err) {
-      console.error('[Scheduler] Refresh failed:', err);
+      logger.error('Refresh failed', { tag: 'Scheduler', data: err });
     }
   }, delay);
 };

@@ -10,7 +10,12 @@ import {
   WORKOUT_ROUTES,
 } from '../../constants';
 import { pushApi } from '../api';
-import { getDeviceInfo, isAppError, resetAndNavigate } from '../../utils';
+import {
+  getDeviceInfo,
+  isAppError,
+  logger,
+  resetAndNavigate,
+} from '../../utils';
 
 const normalizeNotificationData = (data?: {
   [key: string]: any;
@@ -94,7 +99,10 @@ const registerToken = async (token: string, retry = 0) => {
     if (retry < 3) {
       setTimeout(() => registerToken(token, retry + 1), 2000);
     } else if (isAppError(e)) {
-      console.warn('[Push] registerToken failed:', e.message);
+      logger.warn('registerToken failed', {
+        tag: 'Push',
+        data: e,
+      });
     }
   }
 };
@@ -103,7 +111,9 @@ export const initPushNotifications = async () => {
   try {
     const androidGranted = await requestAndroidPermission();
     if (!androidGranted) {
-      console.log('[Push] Android permission denied');
+      logger.info('Android permission denied', {
+        tag: 'Push',
+      });
       return;
     }
 
@@ -113,7 +123,9 @@ export const initPushNotifications = async () => {
       authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
     if (!enabled) {
-      console.log('[Push] Permission denied');
+      logger.info('Permission denied', {
+        tag: 'Push',
+      });
       return;
     }
 
@@ -140,10 +152,16 @@ export const initPushNotifications = async () => {
       //   title: msg.notification?.title,
       //   description: msg.notification?.body,
       // });
-      console.log('[Push] Foreground message:', msg.notification?.title);
+      logger.info('Foreground message', {
+        tag: 'Push',
+        data: msg.notification,
+      });
     });
   } catch (e) {
-    console.log('[Push] Firebase not installed, skipping push setup', e);
+    logger.warn('Firebase not installed, skipping push setup', {
+      tag: 'Push',
+      data: e,
+    });
   }
 };
 

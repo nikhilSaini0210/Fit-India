@@ -1,8 +1,21 @@
-export const API_BASE_URL = __DEV__
-  ? 'http://192.168.31.134:5000/api/v1' // Android emulator → localhost
-  : 'https://api.fitindia.app/api/v1';
+import RNConfig from 'react-native-config';
 
-export const API_TIMEOUT_MS = 15000;
+const ENV = RNConfig.APP_ENV;
+
+export const API_BASE_URL = (() => {
+  switch (ENV) {
+    case 'development':
+      return `${RNConfig.API_BASE_URL_DEV}${RNConfig.API_PREFIX}`;
+    case 'staging':
+      return `${RNConfig.API_BASE_URL_DEV}${RNConfig.API_PREFIX}`; // staging URL
+    case 'production':
+      return `${RNConfig.API_BASE_URL_PROD}${RNConfig.API_PREFIX}`;
+    default:
+      return `${RNConfig.API_BASE_URL_DEV}${RNConfig.API_PREFIX}`;
+  }
+})();
+
+export const API_TIMEOUT_MS = parseInt(RNConfig.API_TIMEOUT, 10);
 
 export const HTTP = {
   OK: 200,

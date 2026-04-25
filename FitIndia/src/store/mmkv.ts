@@ -1,6 +1,7 @@
 import { createMMKV } from 'react-native-mmkv';
 import { QUEUE, STORAGE_KEYS, type StorageKey } from '../constants';
 import { CacheEntry, OfflineRequest } from './interface';
+import { logger } from '../utils';
 
 export const storage = createMMKV({
   id: STORAGE_KEYS.STORE_ID,
@@ -11,7 +12,10 @@ export function setItem<T>(key: StorageKey, value: T): void {
   try {
     storage.set(key, JSON.stringify(value));
   } catch (e) {
-    console.warn(`[MMKV] setItem failed for key "${key}":`, e);
+    logger.warn(`setItem failed for key "${key}"`, {
+      tag: 'MMKV',
+      data: e,
+    });
   }
 }
 
@@ -21,7 +25,10 @@ export function getItem<T>(key: StorageKey): T | null {
     if (raw === undefined || raw === null) return null;
     return JSON.parse(raw) as T;
   } catch (e) {
-    console.warn(`[MMKV] getItem failed for key "${key}":`, e);
+    logger.warn(`getItem failed for key "${key}"`, {
+      tag: 'MMKV',
+      data: e,
+    });
     return null;
   }
 }
