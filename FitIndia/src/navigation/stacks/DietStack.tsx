@@ -6,7 +6,7 @@ import { DIET_ROUTES } from '../../constants';
 
 const Placeholder = ({ route }: any) => (
   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>{route.name}</Text>
+    <Text>{`${route.name} coming soon...`}</Text>
   </View>
 );
 

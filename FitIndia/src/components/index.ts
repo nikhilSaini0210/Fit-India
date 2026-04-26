@@ -30,3 +30,5 @@ export { default as MenuItem } from './ui/MenuItem';
 export { default as VersionFooter } from './ui/VersionFooter';
 export { default as ChipGroup } from './ui/ChipGroup';
 export { default as TagInput } from './ui/TagInput';
+export { default as ToggleRow } from './ui/ToggleRow';
+export { default as SegmentControl } from './ui/SegmentControl';

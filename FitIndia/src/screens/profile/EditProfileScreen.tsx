@@ -184,7 +184,7 @@ const EditProfileScreen: FC = () => {
             <View style={universalStyles.flex}>
               <Input
                 label="Weight (kg)"
-                iconLeft="scale-outline"
+                iconLeft="weight"
                 keyboardType="decimal-pad"
                 value={weight}
                 onChangeText={setWeight}

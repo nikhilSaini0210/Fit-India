@@ -206,23 +206,6 @@ const ProfileScreen: FC = () => {
             marginV={0}
             backgroundColor={colors.borderMuted}
           />
-          <MenuItem
-            colors={colors}
-            icon="delete-outline"
-            label="Delete Account"
-            subtitle="This action is permanent"
-            onPress={() =>
-              Alert.alert(
-                'Delete Account',
-                'All your data will be permanently deleted. This cannot be undone.',
-                [
-                  { text: 'Cancel', style: 'cancel' },
-                  { text: 'Delete', style: 'destructive', onPress: () => {} },
-                ],
-              )
-            }
-            danger
-          />
         </Section>
 
         <VersionFooter style={{ marginTop: rs.verticalScale(24) }} />

@@ -55,7 +55,7 @@ const StepB: FC<StepBProps> = ({
         <View style={s.root}>
           <Input
             label="Weight (kg)"
-            iconLeft="scale-outline"
+            iconLeft="weight"
             keyboardType="decimal-pad"
             value={weight}
             onChangeText={setWeight}
