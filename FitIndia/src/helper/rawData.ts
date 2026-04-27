@@ -190,3 +190,32 @@ export const PLANS = [
     ],
   },
 ];
+
+export const MEAL_TYPES = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
+
+export type MealType = 'breakfast' | 'lunch' | 'snack' | 'dinner';
+
+export const MEAL_META: Record<
+  MealType,
+  { icon: string; emoji: string; color: string; time: string }
+> = {
+  breakfast: {
+    icon: 'white-balance-sunny',
+    emoji: '🌅',
+    color: '#F59E0B',
+    time: '7-9 AM',
+  },
+  lunch: {
+    icon: 'food-variant',
+    emoji: '☀️',
+    color: '#10B981',
+    time: '12-2 PM',
+  },
+  snack: { icon: 'food-apple', emoji: '🍎', color: '#8B5CF6', time: '4–5 PM' },
+  dinner: {
+    icon: 'weather-night',
+    emoji: '🌙',
+    color: '#3B82F6',
+    time: '7-9 PM',
+  },
+};

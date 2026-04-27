@@ -9,3 +9,4 @@ export { default as EditProfileScreen } from './profile/EditProfileScreen';
 export { default as NotificationSettingsScreen } from './profile/NotificationSettingsScreen';
 export { default as SubscriptionScreen } from './profile/SubscriptionScreen';
 export { default as AppSettingsScreen } from './profile/AppSettingsScreen';
+export { default as DietTodayScreen } from './diet/DietTodayScreen';

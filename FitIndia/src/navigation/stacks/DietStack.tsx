@@ -3,6 +3,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { DietStackParamList } from '../../types';
 import { View, Text } from 'react-native';
 import { DIET_ROUTES } from '../../constants';
+import { DietTodayScreen } from '../../screens';
 
 const Placeholder = ({ route }: any) => (
   <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
@@ -14,7 +15,7 @@ const Stack = createNativeStackNavigator<DietStackParamList>();
 
 const DietStack: FC = () => (
   <Stack.Navigator screenOptions={{ headerShown: false }}>
-    <Stack.Screen name={DIET_ROUTES.DIET_TODAY} component={Placeholder} />
+    <Stack.Screen name={DIET_ROUTES.DIET_TODAY} component={DietTodayScreen} />
     <Stack.Screen name={DIET_ROUTES.DIET_PLAN} component={Placeholder} />
     <Stack.Screen name={DIET_ROUTES.DAY_DETAIL} component={Placeholder} />
     <Stack.Screen
