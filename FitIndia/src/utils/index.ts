@@ -5,3 +5,4 @@ export * from './rsUtils';
 export * from './safeInsetsUtils';
 export * from './deviceInfoUtils';
 export { logger } from './logger';
+export * from './dateUtils';

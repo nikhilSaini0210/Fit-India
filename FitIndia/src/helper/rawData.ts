@@ -193,29 +193,87 @@ export const PLANS = [
 
 export const MEAL_TYPES = ['breakfast', 'lunch', 'snack', 'dinner'] as const;
 
+export const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 export type MealType = 'breakfast' | 'lunch' | 'snack' | 'dinner';
 
 export const MEAL_META: Record<
   MealType,
-  { icon: string; emoji: string; color: string; time: string }
+  {
+    icon: string;
+    emoji: string;
+    color: string;
+    time: string;
+    label: string;
+    desc: string;
+  }
 > = {
   breakfast: {
     icon: 'white-balance-sunny',
     emoji: '🌅',
     color: '#F59E0B',
     time: '7-9 AM',
+    label: 'Breakfast',
+    desc: 'Start your day with this energising Indian breakfast',
   },
   lunch: {
     icon: 'food-variant',
     emoji: '☀️',
     color: '#10B981',
     time: '12-2 PM',
+    label: 'Lunch',
+    desc: 'Balanced midday meal to keep you fuelled and focused',
   },
-  snack: { icon: 'food-apple', emoji: '🍎', color: '#8B5CF6', time: '4–5 PM' },
+  snack: {
+    icon: 'food-apple',
+    emoji: '🍎',
+    color: '#8B5CF6',
+    time: '4-5 PM',
+    label: 'Snack',
+    desc: 'Light snack to bridge the gap before dinner',
+  },
   dinner: {
     icon: 'weather-night',
     emoji: '🌙',
     color: '#3B82F6',
     time: '7-9 PM',
+    label: 'Dinner',
+    desc: 'Light, nutritious dinner to end your day well',
   },
 };
+
+export const GOAL_LABELS: Record<string, string> = {
+  weight_loss: 'Fat Loss',
+  weight_gain: 'Weight Gain',
+  muscle_gain: 'Muscle',
+  maintenance: 'Maintain',
+};
+
+export const DIET_LABELS: Record<string, string> = {
+  veg: 'Veg',
+  non_veg: 'Non-Veg',
+  jain: 'Jain',
+  vegan: 'Vegan',
+};
+
+export const DietLabel: Record<string, string> = {
+  veg: '🥦 Vegetarian',
+  non_veg: '🍗 Non-Veg',
+  jain: '🌿 Jain',
+  vegan: '🌱 Vegan',
+};
+
+export const GoalLabel: Record<string, string> = {
+  weight_loss: '🔥 Fat Loss',
+  weight_gain: '⬆️ Weight Gain',
+  muscle_gain: '💪 Muscle',
+  maintenance: '⚖️ Maintain',
+};
+
+export const TIPS = [
+  '🥗 Selecting the best Indian ingredients...',
+  '🔢 Calculating your calorie targets...',
+  '🧠 AI is crafting your personalised plan...',
+  '🍛 Adding roti, dal, paneer & more...',
+  '✅ Almost done — finalising your meals!',
+];

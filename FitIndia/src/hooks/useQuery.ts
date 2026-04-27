@@ -33,7 +33,7 @@ interface MutationOptions<TData, TResult> {
 interface MutationState<TData, TResult> {
   mutate: (
     vars: TData,
-  ) => Promise<{ ok: boolean; data?: TResult; error?: string }>;
+  ) => Promise<{ ok: boolean; data?: TResult; error?: string; code?: string }>;
   loading: boolean;
   error: string | null;
   reset: () => void;
@@ -154,9 +154,10 @@ export function useMutation<TData, TResult = unknown>(
         return { ok: true, data: result as TResult };
       } catch (e) {
         const msg = isAppError(e) ? e.message : 'Operation failed';
+        const code = isAppError(e) ? e.code : 'UNKNOWN';
         setError(msg);
         opts.onError?.(e, vars);
-        return { ok: false, error: msg };
+        return { ok: false, error: msg, code };
       } finally {
         setLoading(false);
       }

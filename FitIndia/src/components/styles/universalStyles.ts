@@ -8,4 +8,8 @@ export const universalStyles = StyleSheet.create({
   paddingTop: {
     paddingTop: rs.verticalScale(52),
   },
+  flexEnd: {
+    alignSelf: 'flex-end',
+  },
+  borderWidthOne: { borderWidth: 1 },
 });

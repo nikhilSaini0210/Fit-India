@@ -18,7 +18,7 @@ import { getOnboardingSlides, OnboardingSlide } from '../../helper';
 import { resetAndNavigate, rs, useSafeInsets } from '../../utils';
 import { Badge, Icon, StepDots } from '../../components';
 import { useOnboarding } from '../../hooks';
-import { useBackPress } from '../../hooks/useBackPress';
+import { useBackPress } from '../../hooks';
 import SlideIllustration from './SlideIllustration';
 
 const OnboardingScreen: FC = () => {

@@ -10,3 +10,8 @@ export { default as NotificationSettingsScreen } from './profile/NotificationSet
 export { default as SubscriptionScreen } from './profile/SubscriptionScreen';
 export { default as AppSettingsScreen } from './profile/AppSettingsScreen';
 export { default as DietTodayScreen } from './diet/DietTodayScreen';
+export { default as DietDayDetailScreen } from './diet/DietDayDetailScreen';
+export { default as DietPlanScreen } from './diet/DietPlanScreen';
+export { default as MealDetailScreen } from './diet/MealDetailScreen';
+export { default as DietHistoryScreen } from './diet/DietHistoryScreen';
+export { default as GenerateDietScreen } from './diet/GenerateDietScreen';
