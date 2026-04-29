@@ -277,3 +277,77 @@ export const TIPS = [
   '🍛 Adding roti, dal, paneer & more...',
   '✅ Almost done — finalising your meals!',
 ];
+
+export const FOCUS_META: Record<
+  string,
+  { emoji: string; color: string; gradient: [string, string] }
+> = {
+  chest: {
+    emoji: '💪',
+    color: '#EF4444',
+    gradient: ['#EF444420', '#EF444408'],
+  },
+  back: { emoji: '🏋️', color: '#3B82F6', gradient: ['#3B82F620', '#3B82F608'] },
+  legs: { emoji: '🦵', color: '#10B981', gradient: ['#10B98120', '#10B98108'] },
+  shoulders: {
+    emoji: '🎯',
+    color: '#F59E0B',
+    gradient: ['#F59E0B20', '#F59E0B08'],
+  },
+  arms: { emoji: '💪', color: '#8B5CF6', gradient: ['#8B5CF620', '#8B5CF608'] },
+  full_body: {
+    emoji: '⚡',
+    color: '#22C55E',
+    gradient: ['#22C55E20', '#22C55E08'],
+  },
+  cardio: {
+    emoji: '🏃',
+    color: '#F97316',
+    gradient: ['#F9731620', '#F9731608'],
+  },
+  rest: { emoji: '😴', color: '#64748B', gradient: ['#64748B20', '#64748B08'] },
+  default: {
+    emoji: '🏋️',
+    color: '#22C55E',
+    gradient: ['#22C55E20', '#22C55E08'],
+  },
+};
+
+export const MUSCLE_COLORS: Record<string, string> = {
+  chest: '#EF4444',
+  back: '#3B82F6',
+  legs: '#10B981',
+  shoulders: '#F59E0B',
+  arms: '#8B5CF6',
+  core: '#EC4899',
+  full_body: '#22C55E',
+  cardio: '#F97316',
+  calves: '#14B8A6',
+  glutes: '#F43F5E',
+  triceps: '#A855F7',
+  biceps: '#06B6D4',
+  rest: '#64748B',
+  default: '#22C55E',
+};
+
+export const MUSCLE_ICONS: Record<string, string> = {
+  chest: 'arm-flex-outline',
+  back: 'human-handsup',
+  legs: 'run-fast',
+  shoulders: 'account-arrow-up',
+  arms: 'arm-flex',
+  core: 'lightning-bolt',
+  full_body: 'human',
+  cardio: 'heart-pulse',
+  default: 'dumbbell',
+};
+
+export const CONFETTI_COLORS = [
+  '#22C55E',
+  '#F59E0B',
+  '#EF4444',
+  '#3B82F6',
+  '#8B5CF6',
+  '#EC4899',
+  '#F97316',
+];

@@ -15,3 +15,7 @@ export { default as DietPlanScreen } from './diet/DietPlanScreen';
 export { default as MealDetailScreen } from './diet/MealDetailScreen';
 export { default as DietHistoryScreen } from './diet/DietHistoryScreen';
 export { default as GenerateDietScreen } from './diet/GenerateDietScreen';
+export { default as WorkoutTodayScreen } from './workout/WorkoutTodayScreen';
+export { default as WorkoutPlanScreen } from './workout/WorkoutPlanScreen';
+export { default as ActiveWorkoutScreen } from './workout/ActiveWorkoutScreen';
+export { default as WorkoutCompleteScreen } from './workout/WorkoutCompleteScreen';

@@ -44,6 +44,23 @@ export function resetAndNavigate<T extends keyof RootStackParamList>(
   }
 }
 
+export function resetStack(
+  routes: {
+    name: keyof RootStackParamList;
+    params?: RootStackParamList[keyof RootStackParamList];
+  }[],
+  index: number = routes.length - 1,
+) {
+  if (navigationRef.isReady()) {
+    navigationRef.dispatch(
+      CommonActions.reset({
+        index,
+        routes,
+      }),
+    );
+  }
+}
+
 export async function goBack() {
   if (navigationRef.isReady()) {
     navigationRef.dispatch(CommonActions.goBack());

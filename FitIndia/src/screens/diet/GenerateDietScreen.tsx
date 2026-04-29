@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Animated,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { selectUser, useAuthStore, useColors } from '../../store';
 import {
@@ -35,11 +28,13 @@ import {
   ScreenWrapper,
 } from '../../components';
 import { DietLabel, GoalLabel, TIPS } from '../../helper';
+import { useModal } from '../../context';
 
 const GenerateDietScreen: FC = () => {
   const colors = useColors();
   const insets = useSafeInsets();
   const user = useAuthStore(selectUser);
+  const modal = useModal();
   const handleError = useApiError();
 
   const [days, setDays] = useState(7);
@@ -72,19 +67,20 @@ const GenerateDietScreen: FC = () => {
   }, []);
 
   const handleGenerate = useCallback(async () => {
-    // Edge case: profile must be complete
     if (!user?.profileComplete) {
-      Alert.alert(
-        'Profile incomplete',
-        'Please complete your profile (weight, height, goal, diet type) before generating a plan.',
-        [
-          { text: 'Cancel', style: 'cancel' },
+      modal({
+        title: 'Profile incomplete',
+        message:
+          'Please complete your profile (weight, height, goal, diet type) before generating a plan.',
+        buttons: [
           {
-            text: 'Go to profile',
+            label: 'Go to profile',
+            variant: 'primary',
             onPress: onGotoProfile,
           },
+          { label: 'Cancel', variant: 'ghost', onPress: () => {} },
         ],
-      );
+      });
       return;
     }
 
@@ -103,7 +99,15 @@ const GenerateDietScreen: FC = () => {
         isAppError: true,
       });
     }
-  }, [user, mutate, days, useAI, onGotoProfile, handleError]);
+  }, [
+    user?.profileComplete,
+    mutate,
+    days,
+    useAI,
+    modal,
+    onGotoProfile,
+    handleError,
+  ]);
 
   if (loading) {
     return (
@@ -431,12 +435,7 @@ const GenerateDietScreen: FC = () => {
             iconRight="arrow-right"
             size="lg"
           />
-          <Button
-            label="Cancel"
-            onPress={goBack}
-            variant="ghost"
-            size="md"
-          />
+          <Button label="Cancel" onPress={goBack} variant="ghost" size="md" />
         </View>
       </ScreenWrapper>
     </ScreenWrapper>

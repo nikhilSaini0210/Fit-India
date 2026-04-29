@@ -12,6 +12,7 @@ interface EmptyProps {
   subTitle?: string;
   onPress?: () => void;
   btnTitle?: string;
+  loading?: boolean;
 }
 
 export const EmptyState: FC<EmptyProps> = ({
@@ -20,6 +21,7 @@ export const EmptyState: FC<EmptyProps> = ({
   subTitle,
   onPress,
   btnTitle,
+  loading = false,
 }) => {
   const colors = useColors();
 
@@ -58,6 +60,7 @@ export const EmptyState: FC<EmptyProps> = ({
           label={btnTitle}
           onPress={onPress}
           iconRight="arrow-right"
+          loading={loading}
           size="md"
           fullWidth={false}
           style={{ marginTop: rs.verticalScale(8) }}

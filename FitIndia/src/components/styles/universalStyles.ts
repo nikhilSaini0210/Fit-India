@@ -12,4 +12,13 @@ export const universalStyles = StyleSheet.create({
     alignSelf: 'flex-end',
   },
   borderWidthOne: { borderWidth: 1 },
+  textCenter: {
+    textAlign: 'center',
+  },
+  absolute: {
+    position: 'absolute',
+  },
+  topZero: {
+    top: 0,
+  },
 });
