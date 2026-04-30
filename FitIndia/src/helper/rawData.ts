@@ -278,38 +278,77 @@ export const TIPS = [
   '✅ Almost done — finalising your meals!',
 ];
 
+export const WORKOUT_TIPS = [
+  '💪 Building your workout split...',
+  '🏋️ Selecting the right exercises...',
+  '⏱️ Setting rest times for your level...',
+  '🔥 Calculating calories burned...',
+  '✅ Your plan is almost ready!',
+];
+
 export const FOCUS_META: Record<
   string,
-  { emoji: string; color: string; gradient: [string, string] }
+  { emoji: string; color: string; gradient: [string, string]; label: string }
 > = {
   chest: {
     emoji: '💪',
     color: '#EF4444',
     gradient: ['#EF444420', '#EF444408'],
+    label: 'Chest Day',
   },
-  back: { emoji: '🏋️', color: '#3B82F6', gradient: ['#3B82F620', '#3B82F608'] },
-  legs: { emoji: '🦵', color: '#10B981', gradient: ['#10B98120', '#10B98108'] },
+  back: {
+    emoji: '🏋️',
+    color: '#3B82F6',
+    gradient: ['#3B82F620', '#3B82F608'],
+    label: 'Back Day',
+  },
+  legs: {
+    emoji: '🦵',
+    color: '#10B981',
+    gradient: ['#10B98120', '#10B98108'],
+    label: 'Leg Day',
+  },
   shoulders: {
     emoji: '🎯',
     color: '#F59E0B',
     gradient: ['#F59E0B20', '#F59E0B08'],
+    label: 'Shoulder Day',
   },
-  arms: { emoji: '💪', color: '#8B5CF6', gradient: ['#8B5CF620', '#8B5CF608'] },
+  arms: {
+    emoji: '💪',
+    color: '#8B5CF6',
+    gradient: ['#8B5CF620', '#8B5CF608'],
+    label: 'Arms Day',
+  },
+  core: {
+    color: '#EC4899',
+    emoji: '⚡',
+    gradient: ['#EC489920', '#EC489908'],
+    label: 'Core Day',
+  },
   full_body: {
     emoji: '⚡',
     color: '#22C55E',
     gradient: ['#22C55E20', '#22C55E08'],
+    label: 'Full Body',
   },
   cardio: {
     emoji: '🏃',
     color: '#F97316',
     gradient: ['#F9731620', '#F9731608'],
+    label: 'Cardio Day',
   },
-  rest: { emoji: '😴', color: '#64748B', gradient: ['#64748B20', '#64748B08'] },
+  rest: {
+    emoji: '😴',
+    color: '#64748B',
+    gradient: ['#64748B20', '#64748B08'],
+    label: 'Rest Day',
+  },
   default: {
     emoji: '🏋️',
     color: '#22C55E',
     gradient: ['#22C55E20', '#22C55E08'],
+    label: 'Back Day',
   },
 };
 

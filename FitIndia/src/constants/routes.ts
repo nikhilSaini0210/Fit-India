@@ -48,6 +48,7 @@ export const WORKOUT_ROUTES = {
   DAY_DETAIL: 'WorkoutDayDetail',
   ACTIVE_WORKOUT: 'ActiveWorkout',
   COMPLETE: 'WorkoutComplete',
+  GENERATE: 'GenerateWorkout',
 } as const;
 
 // ─── Progress stack ───────────────────────────────────────────────────────────

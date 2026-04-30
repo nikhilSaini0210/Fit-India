@@ -19,3 +19,5 @@ export { default as WorkoutTodayScreen } from './workout/WorkoutTodayScreen';
 export { default as WorkoutPlanScreen } from './workout/WorkoutPlanScreen';
 export { default as ActiveWorkoutScreen } from './workout/ActiveWorkoutScreen';
 export { default as WorkoutCompleteScreen } from './workout/WorkoutCompleteScreen';
+export { default as WorkoutDayDetailScreen } from './workout/WorkoutDayDetailScreen';
+export { default as GenerateWorkoutScreen } from './workout/GenerateWorkoutScreen';

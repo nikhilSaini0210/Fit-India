@@ -2,11 +2,7 @@ import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useRef, useState } from 'react';
 import { useColors } from '../../store';
 import { goBack, navigate, rs, useSafeInsets } from '../../utils';
-import {
-  useActiveWorkoutPlan,
-  useApiError,
-  useGenerateWorkoutPlan,
-} from '../../hooks';
+import { useActiveWorkoutPlan } from '../../hooks';
 import { WorkoutDay } from '../../types';
 import { DAYS, FOCUS_META, MUSCLE_COLORS } from '../../helper';
 import {
@@ -25,10 +21,8 @@ import { ExerciseCard } from './components';
 const WorkoutPlanScreen: FC = () => {
   const colors = useColors();
   const insets = useSafeInsets();
-  const handleError = useApiError();
 
   const { data, loading, error, refresh } = useActiveWorkoutPlan();
-  const { mutate: generate, loading: generating } = useGenerateWorkoutPlan();
 
   const plan = (data as any)?.plan ?? data;
 
@@ -77,14 +71,13 @@ const WorkoutPlanScreen: FC = () => {
   const isToday = selectedDay === todayDayNum - 1;
 
   const handleGenerate = useCallback(async () => {
-    const result = await generate({ days: 7, useAI: true });
-    if (!result.ok)
-      handleError({
-        code: result?.code ?? 'UNKNOWN',
-        message: result.error ?? 'Failed',
-        isAppError: true,
-      });
-  }, [generate, handleError]);
+    navigate(ROOT_ROUTES.MAIN, {
+      screen: 'Workout',
+      params: {
+        screen: WORKOUT_ROUTES.GENERATE,
+      },
+    });
+  }, []);
 
   const onActiveWorkoutPlan = useCallback(
     (dayNumber: number, planId: string) => {
@@ -144,7 +137,6 @@ const WorkoutPlanScreen: FC = () => {
           subTitle="Generate a workout plan to get started"
           btnTitle="Generate 7-day plan"
           onPress={handleGenerate}
-          loading={generating}
         />
       ) : (
         <ScreenWrapper

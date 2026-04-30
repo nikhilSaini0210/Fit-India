@@ -111,12 +111,11 @@ const GenerateDietScreen: FC = () => {
 
   if (loading) {
     return (
-      <LinearGradient
-        colors={['#0F172A', '#0D2318', '#0F172A']}
-        style={s.genScreen}
-      >
-        <GeneratingAnimation color={colors.primary} tips={TIPS} />
-      </LinearGradient>
+      <GeneratingAnimation
+        color={colors.primary}
+        tips={TIPS}
+        iconName="lightning-bolt"
+      />
     );
   }
 

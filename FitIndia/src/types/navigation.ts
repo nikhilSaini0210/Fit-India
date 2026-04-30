@@ -42,6 +42,7 @@ export type WorkoutStackParamList = {
     duration: number;
     dayNumber: number;
   };
+  GenerateWorkout: undefined;
 };
 
 export type ProgressStackParamList = {

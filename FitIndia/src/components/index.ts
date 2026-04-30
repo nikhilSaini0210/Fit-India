@@ -36,3 +36,4 @@ export { default as ListHeader } from './ui/ListHeader';
 export { EmptyState, ErrorState } from './ui/State';
 export { default as GeneratingAnimation } from './ui/GeneratingAnimation';
 export { default as OptionPill } from './ui/OptionPill';
+export { default as StatChip } from './ui/StatChip';

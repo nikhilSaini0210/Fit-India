@@ -1,20 +1,15 @@
 import React, { FC } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import type { WorkoutStackParamList } from '../../types';
-import { View, Text } from 'react-native';
 import { WORKOUT_ROUTES } from '../../constants';
 import {
   ActiveWorkoutScreen,
+  GenerateWorkoutScreen,
   WorkoutCompleteScreen,
+  WorkoutDayDetailScreen,
   WorkoutPlanScreen,
   WorkoutTodayScreen,
 } from '../../screens';
-
-const Placeholder = ({ route }: any) => (
-  <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-    <Text>{`${route.name} coming soon...`}</Text>
-  </View>
-);
 
 const Stack = createNativeStackNavigator<WorkoutStackParamList>();
 
@@ -28,13 +23,25 @@ const WorkoutStack: FC = () => (
       name={WORKOUT_ROUTES.WORKOUT_PLAN}
       component={WorkoutPlanScreen}
     />
-    <Stack.Screen name={WORKOUT_ROUTES.DAY_DETAIL} component={Placeholder} />
+    <Stack.Screen
+      name={WORKOUT_ROUTES.DAY_DETAIL}
+      component={WorkoutDayDetailScreen}
+    />
     <Stack.Screen
       name={WORKOUT_ROUTES.ACTIVE_WORKOUT}
       component={ActiveWorkoutScreen}
       options={{
         gestureEnabled: false,
         animation: 'slide_from_bottom',
+      }}
+    />
+    <Stack.Screen
+      name={WORKOUT_ROUTES.GENERATE}
+      component={GenerateWorkoutScreen}
+      options={{
+        presentation: 'modal',
+        animation: 'slide_from_bottom',
+        gestureEnabled: false,
       }}
     />
     <Stack.Screen
