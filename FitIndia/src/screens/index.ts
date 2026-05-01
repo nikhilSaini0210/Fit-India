@@ -25,3 +25,7 @@ export { default as ProgressScreen } from './progress/ProgressScreen';
 export { default as LogWeightScreen } from './progress/LogWeightScreen';
 export { default as ProgressChartsScreen } from './progress/ProgressChartsScreen';
 export { default as StreakBadgesScreen } from './progress/StreakBadgesScreen';
+export { default as HomeScreen } from './home/HomeScreen';
+export { default as QuickWorkoutScreen } from './home/QuickWorkoutScreen';
+export { default as NutritionTargetsScreen } from './home/NutritionTargetsScreen';
+export { default as StreakScreen } from './home/StreakScreen';

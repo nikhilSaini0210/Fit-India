@@ -6,3 +6,10 @@ export const formatDate = (dateStr: string) => {
     year: 'numeric',
   });
 };
+
+export const getDayOfWeek = () =>
+  new Date().toLocaleDateString('en-IN', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+  });

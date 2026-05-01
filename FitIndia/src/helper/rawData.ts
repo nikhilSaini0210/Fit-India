@@ -498,3 +498,62 @@ export const PERIODS = [
   { label: '3M', value: '3months', days: 90 },
   { label: '1Y', value: 'year', days: 365 },
 ] as const;
+
+export const getGreeting = (): { text: string; emoji: string } => {
+  const h = new Date().getHours();
+  if (h < 6) return { text: 'Good night', emoji: '🌙' };
+  if (h < 12) return { text: 'Good morning', emoji: '☀️' };
+  if (h < 17) return { text: 'Good afternoon', emoji: '🌤️' };
+  if (h < 21) return { text: 'Good evening', emoji: '🌅' };
+  return { text: 'Good night', emoji: '🌙' };
+};
+
+export const QUOTES: Record<string, string[]> = {
+  weight_loss: [
+    'Every step counts. Keep going! 🔥',
+    'Small steps lead to big changes 💪',
+    "You're doing amazing — stay consistent!",
+  ],
+  muscle_gain: [
+    'Muscles are built one rep at a time 💪',
+    'Push harder today than yesterday! ⚡',
+    'Strength is earned, not given 🏋️',
+  ],
+  maintenance: [
+    'Consistency is your superpower ⚡',
+    "Stay the course — you've got this! 🎯",
+    'Balance is the key to longevity 🧘',
+  ],
+  weight_gain: [
+    'Fuel your body — eat, grow, repeat 🌱',
+    'Building a stronger you, one meal at a time 🍽️',
+  ],
+};
+
+export const DEFAULT_QUOTES = [
+  'Stay consistent, stay strong! 💪',
+  'One day at a time 🌟',
+  'FitIndia — your health journey starts now 🇮🇳',
+];
+
+export const FOCUS_OPTIONS = [
+  { value: 'full_body', label: 'Full Body', emoji: '⚡', color: '#F97316' },
+  { value: 'chest', label: 'Chest', emoji: '💪', color: '#EF4444' },
+  { value: 'back', label: 'Back', emoji: '🔙', color: '#3B82F6' },
+  { value: 'legs', label: 'Legs', emoji: '🦵', color: '#10B981' },
+  { value: 'shoulders', label: 'Shoulders', emoji: '🏋️', color: '#8B5CF6' },
+  { value: 'arms', label: 'Arms', emoji: '💪', color: '#F59E0B' },
+  { value: 'cardio', label: 'Cardio', emoji: '🏃', color: '#EC4899' },
+  { value: 'core', label: 'Core', emoji: '🎯', color: '#14B8A6' },
+];
+
+export const TYPE_OPTIONS = [
+  { value: 'home', label: 'Home', emoji: '🏠', desc: 'Bodyweight only' },
+  { value: 'gym', label: 'Gym', emoji: '🏋️', desc: 'Full equipment' },
+];
+
+export const quickTips = [
+  'Finding best exercises...',
+  'Calculating intensity...',
+  'Building your session...',
+];

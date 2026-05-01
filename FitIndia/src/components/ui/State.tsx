@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useColors } from '../../store';
 import { rs } from '../../utils';
 import Icon from './Icon';
@@ -8,7 +8,7 @@ import { FC } from 'react';
 
 interface EmptyProps {
   iconName: string;
-  title: string;
+  title?: string;
   subTitle?: string;
   onPress?: () => void;
   btnTitle?: string;
@@ -37,14 +37,16 @@ export const EmptyState: FC<EmptyProps> = ({
           color={colors.textTertiary}
         />
       </View>
-      <Text
-        style={[
-          s.emptyTitle,
-          { color: colors.textPrimary, fontFamily: fonts.SemiBold },
-        ]}
-      >
-        {title}
-      </Text>
+      {title && (
+        <Text
+          style={[
+            s.emptyTitle,
+            { color: colors.textPrimary, fontFamily: fonts.SemiBold },
+          ]}
+        >
+          {title}
+        </Text>
+      )}
       {subTitle && (
         <Text
           style={[
@@ -136,4 +138,84 @@ const s = StyleSheet.create({
     textAlign: 'center',
     lineHeight: rs.font(22),
   },
+});
+
+interface NoPlanStateProps {
+  icon: string;
+  message: string;
+  action: string;
+  onAction: () => void;
+  colors: ReturnType<typeof useColors>;
+  horizontal?: boolean;
+}
+
+export const NoPlanState: FC<NoPlanStateProps> = ({
+  icon,
+  message,
+  action,
+  onAction,
+  colors,
+  horizontal = false,
+}) => (
+  <View style={[np.wrap, horizontal && { flexDirection: 'row' }]}>
+    <Icon
+      iconFamily="MaterialCommunityIcons"
+      name={icon}
+      size={rs.scale(28)}
+      color={colors.textTertiary}
+    />
+    <View style={horizontal ? { flex: 1 } : { alignItems: 'center' }}>
+      <Text
+        style={[
+          np.message,
+          {
+            color: colors.textTertiary,
+            fontFamily: fonts.Regular,
+            textAlign: horizontal ? 'left' : 'center',
+          },
+        ]}
+      >
+        {message}
+      </Text>
+    </View>
+    <Pressable
+      onPress={onAction}
+      style={[
+        np.btn,
+        {
+          backgroundColor: colors.primary + '15',
+          borderColor: colors.primary + '30',
+        },
+      ]}
+    >
+      <Text
+        style={[
+          np.btnText,
+          { color: colors.primary, fontFamily: fonts.SemiBold },
+        ]}
+      >
+        {action}
+      </Text>
+      <Icon
+        iconFamily="MaterialCommunityIcons"
+        name="arrow-right"
+        size={rs.scale(12)}
+        color={colors.primary}
+      />
+    </Pressable>
+  </View>
+);
+const np = StyleSheet.create({
+  wrap: { alignItems: 'center', gap: rs.scale(10), padding: rs.scale(8) },
+  message: { fontSize: rs.font(13) },
+  btn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: rs.scale(4),
+    borderWidth: 1,
+    borderRadius: rs.scale(20),
+    paddingHorizontal: rs.scale(14),
+    paddingVertical: rs.verticalScale(6),
+  },
+  btnText: { fontSize: rs.font(13) },
 });
