@@ -390,3 +390,111 @@ export const CONFETTI_COLORS = [
   '#EC4899',
   '#F97316',
 ];
+
+export const PERIOD_OPTIONS = [
+  { label: '1W', value: 'week' },
+  { label: '1M', value: 'month' },
+  { label: '3M', value: '3months' },
+  { label: '1Y', value: 'year' },
+] as const;
+
+export type PERIOD_TYPES = 'week' | 'month' | '3months' | 'year';
+
+export const MOODS = [
+  { value: 'great', emoji: '😄', label: 'Great' },
+  { value: 'good', emoji: '🙂', label: 'Good' },
+  { value: 'okay', emoji: '😐', label: 'Okay' },
+  { value: 'tired', emoji: '😴', label: 'Tired' },
+  { value: 'bad', emoji: '😔', label: 'Bad' },
+] as const;
+
+export interface AchievementBadgeProps {
+  icon: string;
+  name: string;
+  description: string;
+  unlocked: boolean;
+  color: string;
+  unlockedAt?: string;
+}
+
+interface Achievement {
+  totalLogs: number;
+  longest: number;
+  goalMet: boolean;
+  colors: AppColors;
+}
+
+export const getAchievements = ({
+  totalLogs,
+  longest,
+  goalMet,
+  colors,
+}: Achievement): AchievementBadgeProps[] => [
+  {
+    icon: '🌱',
+    name: 'First Step',
+    description: 'Log your weight for the first time',
+    unlocked: totalLogs >= 1,
+    color: colors.success,
+  },
+  {
+    icon: '🔥',
+    name: '7-Day Streak',
+    description: 'Log weight 7 days in a row',
+    unlocked: longest >= 7,
+    color: '#F97316',
+  },
+  {
+    icon: '⚡',
+    name: '30-Day Warrior',
+    description: 'Maintain a 30-day logging streak',
+    unlocked: longest >= 30,
+    color: '#F59E0B',
+  },
+  {
+    icon: '💪',
+    name: 'Consistent',
+    description: 'Log weight at least 10 times',
+    unlocked: totalLogs >= 10,
+    color: '#8B5CF6',
+  },
+  {
+    icon: '🏆',
+    name: 'Century Club',
+    description: 'Log weight 100 times total',
+    unlocked: totalLogs >= 100,
+    color: '#F59E0B',
+  },
+  {
+    icon: '🎯',
+    name: 'Goal Getter',
+    description: 'Hit your primary fitness goal',
+    unlocked: goalMet,
+    color: colors.primary,
+  },
+  {
+    icon: '📏',
+    name: 'Measure Up',
+    description: 'Log all body measurements once',
+    unlocked: false,
+    color: colors.info,
+  },
+  {
+    icon: '🌟',
+    name: 'FitIndia Legend',
+    description: 'Reach a 60-day streak',
+    unlocked: longest >= 60,
+    color: '#EF4444',
+  },
+];
+
+export type Period = (typeof PERIODS)[number]['value'];
+
+export type ChartTab = 'weight' | 'measurements' | 'bmi';
+
+export const PERIODS = [
+  { label: '1W', value: 'week', days: 7 },
+  { label: '1M', value: 'month', days: 30 },
+  { label: '3M', value: '3months', days: 90 },
+  { label: '1Y', value: 'year', days: 365 },
+] as const;

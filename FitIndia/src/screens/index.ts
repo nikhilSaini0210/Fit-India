@@ -21,3 +21,7 @@ export { default as ActiveWorkoutScreen } from './workout/ActiveWorkoutScreen';
 export { default as WorkoutCompleteScreen } from './workout/WorkoutCompleteScreen';
 export { default as WorkoutDayDetailScreen } from './workout/WorkoutDayDetailScreen';
 export { default as GenerateWorkoutScreen } from './workout/GenerateWorkoutScreen';
+export { default as ProgressScreen } from './progress/ProgressScreen';
+export { default as LogWeightScreen } from './progress/LogWeightScreen';
+export { default as ProgressChartsScreen } from './progress/ProgressChartsScreen';
+export { default as StreakBadgesScreen } from './progress/StreakBadgesScreen';

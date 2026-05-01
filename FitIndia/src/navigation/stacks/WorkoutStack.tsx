@@ -36,20 +36,20 @@ const WorkoutStack: FC = () => (
       }}
     />
     <Stack.Screen
+      name={WORKOUT_ROUTES.COMPLETE}
+      component={WorkoutCompleteScreen}
+      options={{
+        gestureEnabled: false,
+        animation: 'fade',
+      }}
+    />
+    <Stack.Screen
       name={WORKOUT_ROUTES.GENERATE}
       component={GenerateWorkoutScreen}
       options={{
         presentation: 'modal',
         animation: 'slide_from_bottom',
         gestureEnabled: false,
-      }}
-    />
-    <Stack.Screen
-      name={WORKOUT_ROUTES.COMPLETE}
-      component={WorkoutCompleteScreen}
-      options={{
-        gestureEnabled: false,
-        animation: 'fade',
       }}
     />
   </Stack.Navigator>

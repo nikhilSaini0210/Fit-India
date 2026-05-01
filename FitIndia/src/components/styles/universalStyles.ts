@@ -21,4 +21,7 @@ export const universalStyles = StyleSheet.create({
   topZero: {
     top: 0,
   },
+  bottomZero: {
+    marginBottom: 0,
+  },
 });
