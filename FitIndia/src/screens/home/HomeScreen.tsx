@@ -329,8 +329,11 @@ const HomeScreen: FC = () => {
                 colors={[colors.primary + '15', colors.primary + '05']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
-                style={s.calorieGrad}
-              >
+                style={{
+                  ...StyleSheet.absoluteFill,
+                }}
+              />
+              <View style={s.calorieGrad}>
                 <View
                   style={[universalStyles.flex, { gap: rs.verticalScale(12) }]}
                 >
@@ -448,7 +451,7 @@ const HomeScreen: FC = () => {
                     target={target || 2000}
                   />
                 )}
-              </LinearGradient>
+              </View>
             </Card>
           </Pressable>
         </Animated.View>
@@ -774,6 +777,7 @@ const s = StyleSheet.create({
   // Calorie card
   calorieCard: { padding: 0, overflow: 'hidden' },
   calorieGrad: {
+    // ...StyleSheet.absoluteFill,
     flexDirection: 'row',
     alignItems: 'center',
     padding: rs.scale(16),
