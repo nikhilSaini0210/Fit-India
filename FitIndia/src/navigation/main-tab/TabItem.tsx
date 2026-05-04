@@ -1,14 +1,25 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { useColors } from '../../store';
-import { LABEL_MAX_WIDTH, TAB_CONFIG } from './constants';
-import { Animated, Easing, Pressable, StyleSheet, Text } from 'react-native';
+import React, { FC, useCallback, useEffect } from 'react';
+import { Pressable, StyleSheet, Text } from 'react-native';
+import { useColors } from '../../store/appStore';
+import {
+  TAB_CONFIG,
+  TAB_ACCENT,
+  LABEL_MAX_WIDTH,
+  LABEL_MAX_WIDTH_MAP,
+  TIMING_IN,
+  SPRING_DOT,
+  TIMING_OUT,
+} from './constants';
+import { fonts } from '../../constants/fonts';
 import { rs } from '../../utils';
-import LinearGradient from 'react-native-linear-gradient';
+import Animated, {
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from 'react-native-reanimated';
 import { Icon } from '../../components';
-import { fonts } from '../../constants';
-
-const MAX_FONT = rs.font(12);
-const MIN_FONT = rs.font(9);
 
 interface TabItemProps {
   route: string;
@@ -25,241 +36,141 @@ const TabItem: FC<TabItemProps> = ({
 }) => {
   const colors = useColors();
   const cfg = TAB_CONFIG[route];
+  const accent = TAB_ACCENT[route] ?? colors.primary;
+  const maxLabelW = LABEL_MAX_WIDTH_MAP[route] ?? LABEL_MAX_WIDTH;
 
-  const progress = useRef(new Animated.Value(isFocused ? 1 : 0)).current;
-  const tapScale = useRef(new Animated.Value(1)).current;
-  const iconBounce = useRef(new Animated.Value(1)).current;
-  const animatedFont = useRef(new Animated.Value(MAX_FONT)).current;
+  const progress = useSharedValue(isFocused ? 1 : 0);
+  const iconScale = useSharedValue(1);
+  const dotScale = useSharedValue(isFocused ? 1 : 0);
+  const dotOpacity = useSharedValue(isFocused ? 1 : 0);
+  const pillGlow = useSharedValue(isFocused ? 1 : 0);
 
-  const [measuredWidth, setMeasuredWidth] = useState(0);
-  const [ready, setReady] = useState(false);
-
-  const containerWidth = useRef(0);
-
-  useEffect(() => {
-    setReady(false);
-    setMeasuredWidth(0);
-    animatedFont.setValue(MAX_FONT);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route, isFocused]);
-
+  // Only pill / dot / glow here — iconScale is NOT touched on focus change
   useEffect(() => {
     if (isFocused) {
-      Animated.parallel([
-        Animated.timing(progress, {
-          toValue: 1,
-          duration: 230,
-          easing: Easing.out(Easing.cubic),
-          useNativeDriver: false,
-        }),
-        Animated.sequence([
-          Animated.spring(iconBounce, {
-            toValue: 1.2,
-            friction: 6,
-            tension: 180,
-            useNativeDriver: true,
-          }),
-          Animated.spring(iconBounce, {
-            toValue: 1,
-            friction: 6,
-            tension: 180,
-            useNativeDriver: true,
-          }),
-        ]),
-      ]).start();
+      progress.value = withTiming(1, TIMING_IN);
+      dotScale.value = withSpring(1, SPRING_DOT);
+      dotOpacity.value = withTiming(1, { duration: 160 });
+      pillGlow.value = withTiming(1, { duration: 220 });
     } else {
-      Animated.timing(progress, {
-        toValue: 0,
-        duration: 180,
-        easing: Easing.in(Easing.cubic),
-        useNativeDriver: false,
-      }).start();
+      progress.value = withTiming(0, TIMING_OUT);
+      dotScale.value = withSpring(0, { damping: 18, stiffness: 220 });
+      dotOpacity.value = withTiming(0, { duration: 100 });
+      pillGlow.value = withTiming(0, { duration: 150 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
 
-  const handlePress = useCallback(() => {
-    Animated.sequence([
-      Animated.spring(tapScale, {
-        toValue: 0.85,
-        friction: 6,
-        tension: 220,
-        useNativeDriver: true,
-      }),
-      Animated.spring(tapScale, {
-        toValue: 1,
-        friction: 6,
-        tension: 220,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  // Finger down → shrink
+  const handlePressIn = useCallback(() => {
+    iconScale.value = withSpring(0.68, {
+      damping: 12,
+      stiffness: 600,
+      mass: 0.5,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Finger up → spring back, then navigate
+  const handlePressOut = useCallback(() => {
+    iconScale.value = withSpring(1, { damping: 8, stiffness: 250, mass: 0.5 });
     onPress();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onPress]);
 
-  const pillOpacity = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
+  const pillBgStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(progress.value, [0, 1], [0, 1]),
+    transform: [
+      { scaleX: interpolate(progress.value, [0, 1], [0.5, 1]) },
+      { scaleY: interpolate(progress.value, [0, 1], [0.85, 1]) },
+    ],
+  }));
 
-  const labelMaxWidth = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, LABEL_MAX_WIDTH],
-    extrapolate: 'clamp',
-  });
+  const pillGlowStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(pillGlow.value, [0, 1], [0, 0.12]),
+    transform: [{ scale: interpolate(pillGlow.value, [0, 1], [0.6, 1.08]) }],
+  }));
 
-  const labelMargin = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, rs.scale(5)],
-    extrapolate: 'clamp',
-  });
+  const iconStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: iconScale.value }],
+  }));
 
-  const labelOpacity = progress.interpolate({
-    inputRange: [0, 0.6, 1],
-    outputRange: [0, 0, 1],
-    extrapolate: 'clamp',
-  });
+  const labelWrapStyle = useAnimatedStyle(() => ({
+    maxWidth: interpolate(progress.value, [0, 1], [0, maxLabelW]),
+    opacity: interpolate(progress.value, [0, 0.45, 1], [0, 0, 1], 'clamp'),
+  }));
 
-  const dotOpacity = progress.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
+  const dotStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: dotScale.value }],
+    opacity: dotOpacity.value,
+  }));
 
-  const iconColor = isFocused ? colors.primary : colors.tabInactive;
-
-  useEffect(() => {
-    if (measuredWidth === 0 || containerWidth.current <= 0) return;
-
-    let low = MIN_FONT;
-    let high = MAX_FONT;
-    let best = MIN_FONT;
-
-    while (low <= high) {
-      const mid = Math.floor((low + high) / 2);
-
-      const scaledWidth = (measuredWidth / MAX_FONT) * mid;
-
-      if (scaledWidth <= containerWidth.current) {
-        best = mid;
-        low = mid + 1;
-      } else {
-        high = mid - 1;
-      }
-    }
-
-    Animated.timing(animatedFont, {
-      toValue: best,
-      duration: 150,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    }).start();
-
-    setReady(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [measuredWidth]);
+  const iconColor = isFocused ? accent : colors.tabInactive;
 
   return (
     <Pressable
-      onPress={handlePress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       onLongPress={onLongPress}
-      style={styles.tabItem}
+      style={s.tabItem}
       android_ripple={null}
       accessibilityRole="tab"
       accessibilityState={{ selected: isFocused }}
-      accessibilityLabel={cfg.label}
+      accessibilityLabel={cfg?.label}
     >
-      <Animated.View
-        style={[styles.pill, { transform: [{ scale: tapScale }] }]}
-      >
+      <Animated.View style={s.pill}>
         <Animated.View
-          style={[styles.pillBg, { opacity: pillOpacity }]}
           pointerEvents="none"
-        >
-          <LinearGradient
-            colors={[colors.primary + '28', colors.primary + '0E']}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        </Animated.View>
+          style={[
+            StyleSheet.absoluteFill,
+            s.pillBg,
+            { backgroundColor: accent + '30', borderRadius: rs.scale(28) },
+            pillGlowStyle,
+          ]}
+        />
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            s.pillBg,
+            { backgroundColor: accent + '18' },
+            pillBgStyle,
+          ]}
+        />
 
-        <Animated.View style={{ transform: [{ scale: iconBounce }] }}>
+        <Animated.View style={iconStyle}>
           <Icon
             iconFamily="MaterialCommunityIcons"
-            name={isFocused ? cfg.iconFocused : cfg.icon}
-            size={rs.scale(22)}
+            name={isFocused ? cfg?.iconFocused ?? cfg?.icon : cfg?.icon ?? ''}
+            size={rs.scale(20)}
             color={iconColor}
           />
         </Animated.View>
 
-        <Animated.View
-          onLayout={e => {
-            const width = e.nativeEvent.layout.width;
-
-            if (width > 0 && containerWidth.current !== width) {
-              containerWidth.current = width;
-              setReady(false);
-            }
-          }}
-          style={[
-            styles.labelWrap,
-            {
-              maxWidth: labelMaxWidth,
-              marginLeft: labelMargin,
-              opacity: labelOpacity,
-            },
-          ]}
-        >
-          {!ready && (
-            <Text
-              style={styles.hiddenText}
-              onLayout={e => {
-                setMeasuredWidth(e.nativeEvent.layout.width);
-              }}
-            >
-              {cfg.label}
-            </Text>
-          )}
-
-          {ready && (
-            <Animated.Text
-              numberOfLines={1}
-              style={[
-                styles.label,
-                {
-                  color: iconColor,
-                  fontFamily: fonts.SemiBold,
-                  fontSize: animatedFont,
-                },
-              ]}
-            >
-              {cfg.label}
-            </Animated.Text>
-          )}
+        <Animated.View style={[s.labelWrap, labelWrapStyle]}>
+          <Text
+            numberOfLines={1}
+            style={[s.label, { color: accent, fontFamily: fonts.SemiBold }]}
+          >
+            {cfg?.label}
+          </Text>
         </Animated.View>
       </Animated.View>
 
-      {isFocused && (
-        <Animated.View
-          style={[
-            styles.dot,
-            { backgroundColor: colors.primary, opacity: dotOpacity },
-          ]}
-        />
-      )}
+      <Animated.View style={[s.dot, { backgroundColor: accent }, dotStyle]} />
     </Pressable>
   );
 };
 
 export default TabItem;
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   tabItem: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: rs.verticalScale(2),
-    minHeight: 48,
+    minHeight: 50,
   },
   pill: {
     flexDirection: 'row',
@@ -271,21 +182,16 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   pillBg: {
-    ...StyleSheet.absoluteFill,
     borderRadius: rs.scale(24),
-    overflow: 'hidden',
   },
   labelWrap: {
     overflow: 'hidden',
+    marginLeft: rs.scale(5),
   },
   label: {
+    fontSize: rs.font(9),
     flexShrink: 1,
-  },
-  hiddenText: {
-    position: 'absolute',
-    opacity: 0,
-    fontSize: MAX_FONT,
-    fontFamily: fonts.SemiBold,
+    letterSpacing: 0.2,
   },
   dot: {
     width: rs.scale(4),

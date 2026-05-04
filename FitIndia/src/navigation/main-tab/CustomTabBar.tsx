@@ -4,6 +4,7 @@ import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import { useColors } from '../../store';
 import { rs } from '../../utils';
 import TabItem from './TabItem';
+import { TAB_ACCENT } from './constants';
 
 const getBottomPadding = () => {
   if (Platform.OS !== 'ios') return rs.verticalScale(6);
@@ -14,18 +15,30 @@ const getBottomPadding = () => {
 const CustomTabBar: FC<BottomTabBarProps> = ({ state, navigation }) => {
   const colors = useColors();
 
+  const focusedRoute = state.routes[state.index];
+  const accentColor = TAB_ACCENT[focusedRoute?.name] ?? colors.primary;
+
   return (
     <View
       style={[
         styles.tabBarOuter,
         {
-          shadowColor: colors.black,
+          shadowColor: accentColor,
           backgroundColor: colors.tabBar,
-          borderTopColor: colors.tabBarBorder,
           paddingBottom: getBottomPadding(),
         },
       ]}
     >
+      <View
+        style={[
+          styles.hairline,
+          {
+            backgroundColor: accentColor,
+            shadowColor: accentColor,
+          },
+        ]}
+      />
+
       {state.routes.map((route, index) => {
         const isFocused = state.index === index;
 
@@ -62,12 +75,24 @@ export default CustomTabBar;
 const styles = StyleSheet.create({
   tabBarOuter: {
     flexDirection: 'row',
-    borderTopWidth: StyleSheet.hairlineWidth,
     paddingTop: rs.verticalScale(8),
     paddingHorizontal: rs.scale(6),
-    shadowOffset: { width: 0, height: -3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 16,
-    elevation: 20,
+    shadowOffset: { width: 0, height: -4 },
+    shadowOpacity: 0.18,
+    shadowRadius: 20,
+    elevation: 24,
+  },
+  hairline: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 2,
+    borderRadius: 2,
+    opacity: 0.9,
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.9,
+    shadowRadius: 8,
+    elevation: 4,
   },
 });
