@@ -1,10 +1,11 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC } from 'react';
 import { usePressScale } from '../../hooks';
 import { useColors } from '../../store';
 import { rs } from '../../utils';
 import Icon from './Icon';
 import { fonts } from '../../constants';
+import Animated from 'react-native-reanimated';
 
 interface Props {
   icon: string;
@@ -16,10 +17,10 @@ interface Props {
 
 const QuickAction: FC<Props> = ({ icon, label, color, onPress, badge }) => {
   const colors = useColors();
-  const { scale, onPressIn, onPressOut } = usePressScale(0.93);
+  const { pressStyle, onPressIn, onPressOut } = usePressScale(0.93);
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={pressStyle}>
       <Pressable
         onPress={onPress}
         onPressIn={onPressIn}

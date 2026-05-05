@@ -9,10 +9,12 @@ const getOnlineStatus = (state: NetInfoState): boolean => {
   );
 };
 
-export const useIsOnline = (): boolean => {
-  const [isOnline, setIsOnline] = useState(false);
+export const useIsOnline = (): boolean | null => {
+  const [isOnline, setIsOnline] = useState<boolean | null>(null);
 
   useEffect(() => {
+    NetInfo.fetch().then(state => setIsOnline(getOnlineStatus(state)));
+
     const unsub = NetInfo.addEventListener((state: NetInfoState) => {
       setIsOnline(getOnlineStatus(state));
     });

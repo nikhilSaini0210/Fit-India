@@ -1,4 +1,4 @@
-import { Animated, Share, StyleSheet, Text, View } from 'react-native';
+import { Animated as RNAnimated, Share, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { WorkoutStackScreenProps } from '../../types';
 import { selectUser, useAuthStore, useColors } from '../../store';
@@ -9,6 +9,7 @@ import { Button, Icon, ScreenWrapper, universalStyles } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts, ROOT_ROUTES, WORKOUT_ROUTES } from '../../constants';
 import { AchievementStat, ConfettiParticle } from './components';
+import Animated from 'react-native-reanimated';
 
 type Props = WorkoutStackScreenProps<'WorkoutComplete'>;
 
@@ -18,12 +19,12 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
   const insets = useSafeInsets();
   const user = useAuthStore(selectUser);
 
-  const { scale: trophyScale, start: trophyPop } = useScalePop(800);
-  const { scale: pulseScale, start: pulseStart } = usePulse(0.96, 1.04, 1000);
+  const { scaleStyle, start: trophyPop } = useScalePop(800);
+  const { pulseStyle, start: pulseStart } = usePulse(0.96, 1.04, 1000);
   const { anims, start: staggerStart } = useStagger(3, 120, 500);
 
-  const titleOpacity = useRef(new Animated.Value(0)).current;
-  const titleY = useRef(new Animated.Value(40)).current;
+  const titleOpacity = useRef(new RNAnimated.Value(0)).current;
+  const titleY = useRef(new RNAnimated.Value(40)).current;
 
   // Confetti config
 
@@ -39,15 +40,15 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
     pulseStart();
     staggerStart();
 
-    Animated.sequence([
-      Animated.delay(300),
-      Animated.parallel([
-        Animated.timing(titleOpacity, {
+    RNAnimated.sequence([
+      RNAnimated.delay(300),
+      RNAnimated.parallel([
+        RNAnimated.timing(titleOpacity, {
           toValue: 1,
           duration: 500,
           useNativeDriver: true,
         }),
-        Animated.spring(titleY, {
+        RNAnimated.spring(titleY, {
           toValue: 0,
           friction: 6,
           tension: 80,
@@ -132,8 +133,8 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
         ]}
       >
         {/* Trophy */}
-        <Animated.View style={{ transform: [{ scale: trophyScale }] }}>
-          <Animated.View style={{ transform: [{ scale: pulseScale }] }}>
+        <Animated.View style={scaleStyle}>
+          <Animated.View style={pulseStyle}>
             <LinearGradient
               colors={['#F59E0B', '#D97706']}
               start={{ x: 0, y: 0 }}
@@ -151,7 +152,7 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
         </Animated.View>
 
         {/* Title */}
-        <Animated.View
+        <RNAnimated.View
           style={[
             s.titleWrap,
             { opacity: titleOpacity, transform: [{ translateY: titleY }] },
@@ -168,10 +169,10 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
           >
             {line}
           </Text>
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* Stats */}
-        <Animated.View
+        <RNAnimated.View
           style={[
             s.statsGrid,
             {
@@ -198,10 +199,10 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
             label="Completed"
             color={colors.primary}
           />
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* Streak encouragement */}
-        <Animated.View
+        <RNAnimated.View
           style={[
             s.streakCard,
             {
@@ -229,10 +230,10 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
               Keep your streak alive! Log your next workout tomorrow.
             </Text>
           </LinearGradient>
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* Actions */}
-        <Animated.View
+        <RNAnimated.View
           style={[
             s.actions,
             {
@@ -262,7 +263,7 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
               style={universalStyles.flex}
             />
           </View>
-        </Animated.View>
+        </RNAnimated.View>
       </View>
     </ScreenWrapper>
   );

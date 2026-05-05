@@ -1,4 +1,4 @@
-import { Alert, Animated } from 'react-native';
+import { Alert } from 'react-native';
 import React, { FC, useCallback, useEffect, useMemo } from 'react';
 import { useAuth, useSlideUp } from '../../hooks';
 import {
@@ -14,17 +14,14 @@ import { navigate, rs } from '../../utils';
 import { PROFILE_ROUTES, ROOT_ROUTES } from '../../constants';
 import { ProfileCompletionDialogue, ProfileHeader } from './comp';
 import { fields } from '../../helper';
+import Animated from 'react-native-reanimated';
 
 const ProfileScreen: FC = () => {
   const user = useAuthStore(selectUser);
   const colors = useColors();
   const { logout } = useAuth();
 
-  const {
-    opacity: slideOp,
-    translateY,
-    start: slideStart,
-  } = useSlideUp(30, 500, 200);
+  const { slideStyle, start: slideStart } = useSlideUp(30, 500, 200);
 
   useEffect(() => {
     slideStart();
@@ -89,7 +86,7 @@ const ProfileScreen: FC = () => {
       {user && <ProfileHeader user={user} onEdit={onEdit} />}
 
       {pct < 100 && <ProfileCompletionDialogue pct={pct} onEdit={onEdit} />}
-      <Animated.View style={{ opacity: slideOp, transform: [{ translateY }] }}>
+      <Animated.View style={slideStyle}>
         <Section title="ACCOUNT" colors={colors}>
           <MenuItem
             colors={colors}

@@ -1,4 +1,10 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated as RNAnimated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, { FC, useCallback, useEffect } from 'react';
 import {
   selectStreak,
@@ -40,6 +46,7 @@ import {
   MotivationalBanner,
   WorkoutPreviewCard,
 } from './components';
+import Animated from 'react-native-reanimated';
 
 const HomeScreen: FC = () => {
   const colors = useColors();
@@ -51,8 +58,8 @@ const HomeScreen: FC = () => {
   const streak = useProgressStore(selectStreak);
 
   const { anims, start } = useStagger(7, 60, 400);
-  const { scale: streakScale, start: streakPop } = useScalePop(300);
-  const { scale: pulseScale, start: startPulse } = usePulse(0.97, 1.03, 1400);
+  const { scaleStyle, start: streakPop } = useScalePop(300);
+  const { pulseStyle, start: startPulse } = usePulse(0.97, 1.03, 1400);
 
   // Data fetching
   const {
@@ -153,7 +160,7 @@ const HomeScreen: FC = () => {
       refreshing={isRefreshing}
       onRefresh={refresh}
     >
-      <Animated.View
+      <RNAnimated.View
         style={{
           opacity: anims[0].opacity,
           transform: [{ translateY: anims[0].translateY }],
@@ -193,13 +200,8 @@ const HomeScreen: FC = () => {
             </View>
 
             <Pressable onPress={() => goToProgress('StreakBadges')}>
-              <Animated.View
-                style={[
-                  s.streakBubble,
-                  { transform: [{ scale: streakScale }] },
-                ]}
-              >
-                <Animated.View style={{ transform: [{ scale: pulseScale }] }}>
+              <Animated.View style={[s.streakBubble, scaleStyle]}>
+                <Animated.View style={pulseStyle}>
                   <LinearGradient
                     colors={
                       streak.current >= 7
@@ -264,10 +266,10 @@ const HomeScreen: FC = () => {
             </Pressable>
           )}
         </LinearGradient>
-      </Animated.View>
+      </RNAnimated.View>
 
       <View style={s.content}>
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[1].opacity,
             transform: [{ translateY: anims[1].translateY }],
@@ -307,9 +309,9 @@ const HomeScreen: FC = () => {
               onPress={() => goToQuickWorkout('QuickWorkout')}
             />
           </View>
-        </Animated.View>
+        </RNAnimated.View>
 
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[2].opacity,
             transform: [{ translateY: anims[2].translateY }],
@@ -454,9 +456,9 @@ const HomeScreen: FC = () => {
               </View>
             </Card>
           </Pressable>
-        </Animated.View>
+        </RNAnimated.View>
 
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[3].opacity,
             transform: [{ translateY: anims[3].translateY }],
@@ -518,9 +520,9 @@ const HomeScreen: FC = () => {
               ))
             )}
           </Card>
-        </Animated.View>
+        </RNAnimated.View>
 
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[4].opacity,
             transform: [{ translateY: anims[4].translateY }],
@@ -571,9 +573,9 @@ const HomeScreen: FC = () => {
               }
             />
           )}
-        </Animated.View>
+        </RNAnimated.View>
 
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[5].opacity,
             transform: [{ translateY: anims[5].translateY }],
@@ -689,16 +691,16 @@ const HomeScreen: FC = () => {
               </Pressable>
             ))}
           </View>
-        </Animated.View>
+        </RNAnimated.View>
 
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[6].opacity,
             transform: [{ translateY: anims[6].translateY }],
           }}
         >
           <MotivationalBanner streak={streak.current} goal={user?.goal} />
-        </Animated.View>
+        </RNAnimated.View>
       </View>
     </ScreenWrapper>
   );

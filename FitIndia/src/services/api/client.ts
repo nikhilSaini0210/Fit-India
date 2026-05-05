@@ -109,11 +109,35 @@ apiClient.interceptors.response.use(
       }
 
       if (originalRequest.url?.includes(ENDPOINTS.REFRESH)) {
+        const freshAccess = RawTokens.getAccess();
+        const freshRefresh = RawTokens.getRefresh();
+
+        if (freshAccess && freshRefresh) {
+          originalRequest.headers.Authorization = `Bearer ${freshAccess}`;
+          originalRequest._retry = true;
+          return apiClient(originalRequest);
+        }
+
+        isRefreshing = false;
         _onForceLogout();
         throw createAppError(
           'SESSION_EXPIRED',
           'Session expired. Please login.',
         );
+      }
+
+      if (!isRefreshing) {
+        const currentHeader = originalRequest.headers.Authorization as
+          | string
+          | undefined;
+        const currentToken = currentHeader?.replace('Bearer ', '');
+        const storedToken = RawTokens.getAccess();
+
+        if (storedToken && storedToken !== currentToken) {
+          originalRequest.headers.Authorization = `Bearer ${storedToken}`;
+          originalRequest._retry = true;
+          return apiClient(originalRequest);
+        }
       }
 
       if (isRefreshing) {
@@ -162,7 +186,33 @@ apiClient.interceptors.response.use(
         flushQueue(accessToken);
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
-      } catch {
+      } catch (refreshErr) {
+        const refreshError = refreshErr as AxiosError;
+
+        if (!refreshError.response) {
+          isRefreshing = false;
+          flushQueue(
+            null,
+            createAppError('NETWORK_ERROR', 'No connection. Please try again.'),
+          );
+          throw createAppError(
+            'NETWORK_ERROR',
+            'No internet. Please try again when online.',
+          );
+        }
+
+        if (refreshError.response.status >= 500) {
+          isRefreshing = false;
+          flushQueue(
+            null,
+            createAppError('SERVER_ERROR', 'Server error. Please try again.'),
+          );
+          throw createAppError(
+            'SERVER_ERROR',
+            'Server error. Please try again later.',
+          );
+        }
+
         flushQueue(null, createAppError('SESSION_EXPIRED', 'Session expired.'));
         RawTokens.clear();
         _onForceLogout();

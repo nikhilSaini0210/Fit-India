@@ -1,10 +1,16 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated as RNAnimated,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { ProgressLog, ProgressStackScreenProps } from '../../types';
 import { selectSummary, useColors, useProgressStore } from '../../store';
 import { goBack, navigate, rs, useSafeInsets } from '../../utils';
 import {
-  useApiError,
+  // useApiError,
   useFadeIn,
   useProgressHistory,
   useStagger,
@@ -26,6 +32,7 @@ import {
   StatDeltaCard,
   WeightChart,
 } from './components';
+import Animated from 'react-native-reanimated';
 
 type Props = ProgressStackScreenProps<'ProgressCharts'>;
 
@@ -33,13 +40,13 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
   const colors = useColors();
   const insets = useSafeInsets();
   const summary = useProgressStore(selectSummary);
-  const handleError = useApiError();
+  // const handleError = useApiError();
 
   const initialPeriod = (route.params?.period ?? 'month') as Period;
   const [period, setPeriod] = useState<Period>(initialPeriod);
   const [chartTab, setChartTab] = useState<ChartTab>('weight');
 
-  const { opacity, start } = useFadeIn(500);
+  const { fadeStyle, start } = useFadeIn(500);
   const { anims, start: staggerStart } = useStagger(4, 80, 400);
 
   useEffect(() => {
@@ -75,13 +82,13 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
         )
       : null;
 
-  const tabIndicatorX = useRef(new Animated.Value(0)).current;
+  const tabIndicatorX = useRef(new RNAnimated.Value(0)).current;
   const tabWidth = (rs.screenWidth - rs.scale(32)) / 3;
 
   const switchTab = useCallback(
     (tab: ChartTab, idx: number) => {
       setChartTab(tab);
-      Animated.spring(tabIndicatorX, {
+      RNAnimated.spring(tabIndicatorX, {
         toValue: idx * tabWidth,
         friction: 8,
         tension: 100,
@@ -112,7 +119,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
       />
 
       <Animated.ScrollView
-        style={{ opacity }}
+        style={fadeStyle}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           s.scroll,
@@ -122,7 +129,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
         onRefresh={refresh}
       >
         {/* ── Period selector ── */}
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[0].opacity,
             transform: [{ translateY: anims[0].translateY }],
@@ -160,10 +167,10 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
               );
             })}
           </View>
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* ── Delta cards ── */}
-        <Animated.View
+        <RNAnimated.View
           style={[
             s.deltaRow,
             {
@@ -202,10 +209,10 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
             subtitle="Total entries"
             style={{ flex: 1 }}
           />
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* ── Chart tab switcher ── */}
-        <Animated.View style={{ opacity: anims[2].opacity }}>
+        <RNAnimated.View style={{ opacity: anims[2].opacity }}>
           <View style={[s.tabRow, { borderBottomColor: colors.border }]}>
             {(['weight', 'measurements', 'bmi'] as ChartTab[]).map((tab, i) => {
               const labels = {
@@ -236,7 +243,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
             })}
 
             {/* Sliding underline */}
-            <Animated.View
+            <RNAnimated.View
               style={[
                 s.tabIndicator,
                 {
@@ -247,10 +254,10 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
               ]}
             />
           </View>
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* ── Chart content ── */}
-        <Animated.View
+        <RNAnimated.View
           style={{
             opacity: anims[3].opacity,
             transform: [{ translateY: anims[3].translateY }],
@@ -497,7 +504,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
               )}
             </Card>
           )}
-        </Animated.View>
+        </RNAnimated.View>
 
         {/* Log weight CTA */}
         <Pressable

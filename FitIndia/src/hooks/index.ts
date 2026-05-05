@@ -29,6 +29,7 @@ export {
   usePressScale,
   useStagger,
   useRotate,
+  useSpringScale,
 } from './useAnimations';
 export { useOnboarding } from './useOnboarding';
 export { useBackPress } from './useBackPress';

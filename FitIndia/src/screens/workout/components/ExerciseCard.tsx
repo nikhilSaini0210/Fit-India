@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {  Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC } from 'react';
 import { rs } from '../../../utils';
 import { Exercise } from '../../../types';
@@ -8,6 +8,7 @@ import { MUSCLE_COLORS, MUSCLE_ICONS } from '../../../helper';
 import { Icon } from '../../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts } from '../../../constants';
+import Animated from 'react-native-reanimated';
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -29,7 +30,7 @@ const ExerciseCard: FC<ExerciseCardProps> = ({
   compact = false,
 }) => {
   const colors = useColors();
-  const { scale, onPressIn, onPressOut } = usePressScale(0.97);
+  const { pressStyle, onPressIn, onPressOut } = usePressScale(0.97);
   const muscle = exercise.muscle?.toLowerCase() ?? 'default';
   const color = MUSCLE_COLORS[muscle] ?? colors.primary;
   const iconName = MUSCLE_ICONS[muscle] ?? MUSCLE_ICONS.default;
@@ -44,7 +45,7 @@ const ExerciseCard: FC<ExerciseCardProps> = ({
   const textDecorationLine = isCompleted ? 'line-through' : 'none';
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={pressStyle}>
       <Pressable
         onPress={onPress}
         onPressIn={onPressIn}

@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {  Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC } from 'react';
 import { MEAL_META, MealType } from '../../../helper';
 import { MealItem } from '../../../types';
@@ -7,6 +7,7 @@ import { usePressScale } from '../../../hooks';
 import { rs } from '../../../utils';
 import { fonts } from '../../../constants';
 import { Icon } from '../../../components';
+import Animated from 'react-native-reanimated';
 
 interface MealCardProps {
   type: MealType;
@@ -25,7 +26,7 @@ const MealCard: FC<MealCardProps> = ({
 }) => {
   const colors = useColors();
   const meta = MEAL_META[type];
-  const { scale, onPressIn, onPressOut } = usePressScale(0.97);
+  const { pressStyle, onPressIn, onPressOut } = usePressScale(0.97);
 
   const isEmpty = !meal?.name;
 
@@ -36,7 +37,7 @@ const MealCard: FC<MealCardProps> = ({
   };
 
   return (
-    <Animated.View style={{ transform: [{ scale }] }}>
+    <Animated.View style={pressStyle}>
       <Pressable
         onPress={onPress}
         onPressIn={onPressIn}

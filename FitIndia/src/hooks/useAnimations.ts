@@ -1,130 +1,132 @@
 import { useCallback, useRef } from 'react';
-import { Animated, Easing } from 'react-native';
+import { Animated } from 'react-native';
+import {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+  Easing,
+  withSpring,
+  withRepeat,
+  withSequence,
+} from 'react-native-reanimated';
 
 export const useFadeIn = (duration = 600, delay = 0) => {
-  const opacity = useRef(new Animated.Value(0)).current;
+  const opacity = useSharedValue(0);
+
+  const fadeStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   const start = useCallback(() => {
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration,
+    opacity.value = withDelay(
       delay,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: true,
-    }).start();
+      withTiming(1, { duration, easing: Easing.out(Easing.cubic) }),
+    );
   }, [opacity, duration, delay]);
 
-  return { opacity, start };
+  return { fadeStyle, start };
 };
 
 export const useSlideUp = (distance = 40, duration = 600, delay = 0) => {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(distance)).current;
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(distance);
+
+  const slideStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
 
   const start = useCallback(() => {
-    Animated.parallel([
-      Animated.timing(opacity, {
-        toValue: 1,
-        duration,
-        delay,
-        easing: Easing.out(Easing.cubic),
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration,
-        delay,
-        easing: Easing.out(Easing.exp),
-        useNativeDriver: true,
-      }),
-    ]).start();
+    opacity.value = withDelay(
+      delay,
+      withTiming(1, { duration, easing: Easing.out(Easing.cubic) }),
+    );
+    translateY.value = withDelay(
+      delay,
+      withTiming(0, { duration, easing: Easing.out(Easing.exp) }),
+    );
   }, [opacity, translateY, duration, delay]);
 
-  return { opacity, translateY, start };
+  return { slideStyle, start };
 };
 
 export const useScalePop = (delay = 0) => {
-  const scale = useRef(new Animated.Value(0.6)).current;
+  const scale = useSharedValue(0.6);
+
+  const scaleStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const start = useCallback(() => {
-    Animated.spring(scale, {
-      toValue: 1,
+    scale.value = withDelay(
       delay,
-      friction: 6,
-      tension: 100,
-      useNativeDriver: true,
-    }).start();
+      withSpring(1, { damping: 12, stiffness: 180 }),
+    );
   }, [scale, delay]);
 
-  return { scale, start };
+  return { scaleStyle, start };
 };
 
 export const usePulse = (min = 0.97, max = 1.03, duration = 900) => {
-  const scale = useRef(new Animated.Value(1)).current;
+  const scale = useSharedValue(1);
+
+  const pulseStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const start = useCallback(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(scale, {
-          toValue: max,
-          duration,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-        Animated.timing(scale, {
-          toValue: min,
-          duration,
-          easing: Easing.inOut(Easing.sin),
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
+    scale.value = withRepeat(
+      withSequence(
+        withTiming(max, { duration, easing: Easing.inOut(Easing.sin) }),
+        withTiming(min, { duration, easing: Easing.inOut(Easing.sin) }),
+      ),
+      -1,
+      false,
+    );
   }, [scale, min, max, duration]);
 
-  const stop = useCallback(() => scale.stopAnimation(), [scale]);
+  const stop = useCallback(() => {
+    scale.value = withTiming(1, { duration: 200 });
+  }, [scale]);
 
-  return { scale, start, stop };
+  return { pulseStyle, start, stop };
 };
 
 export const useShimmer = (width: number, duration = 1200) => {
-  const translateX = useRef(new Animated.Value(-width)).current;
+  const translateX = useSharedValue(-width);
+
+  const shimmerStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: translateX.value }],
+  }));
 
   const start = useCallback(() => {
-    Animated.loop(
-      Animated.timing(translateX, {
-        toValue: width,
-        duration,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
+    translateX.value = withRepeat(
+      withTiming(width, { duration, easing: Easing.linear }),
+      -1,
+      false,
+    );
   }, [translateX, width, duration]);
 
-  return { translateX, start };
+  return { shimmerStyle, start };
 };
 
 export const usePressScale = (toValue = 0.95) => {
-  const scale = useRef(new Animated.Value(1)).current;
+  const scale = useSharedValue(1);
+
+  const pressStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
   const onPressIn = useCallback(() => {
-    Animated.spring(scale, {
-      toValue,
-      friction: 8,
-      tension: 200,
-      useNativeDriver: true,
-    }).start();
+    scale.value = withSpring(toValue, { damping: 15, stiffness: 300 });
   }, [scale, toValue]);
 
   const onPressOut = useCallback(() => {
-    Animated.spring(scale, {
-      toValue: 1,
-      friction: 8,
-      tension: 200,
-      useNativeDriver: true,
-    }).start();
+    scale.value = withSpring(1, { damping: 15, stiffness: 300 });
   }, [scale]);
 
-  return { scale, onPressIn, onPressOut };
+  return { pressStyle, onPressIn, onPressOut };
 };
 
 export const useStagger = (
@@ -165,21 +167,37 @@ export const useStagger = (
 };
 
 export const useRotate = (duration = 1500) => {
-  const rotate = useRef(new Animated.Value(0)).current;
+  const rotation = useSharedValue(0);
+
+  const rotateStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value * 360}deg` }],
+  }));
 
   const start = useCallback(() => {
-    Animated.loop(
-      Animated.timing(rotate, {
-        toValue: 1,
-        duration,
-        easing: Easing.linear,
-        useNativeDriver: true,
-      }),
-    ).start();
-  }, [rotate, duration]);
+    rotation.value = withRepeat(
+      withTiming(1, { duration, easing: Easing.linear }),
+      -1,
+      false,
+    );
+  }, [rotation, duration]);
 
-  const interpolate = () =>
-    rotate.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+  return { rotateStyle, start };
+};
 
-  return { rotate: interpolate(), start };
+export const useSpringScale = (from = 0.5) => {
+  const scale = useSharedValue(from);
+
+  const scaleSpringStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const start = useCallback(() => {
+    scale.value = withSpring(1, { damping: 10, stiffness: 120 });
+  }, [scale]);
+
+  const reset = useCallback(() => {
+    scale.value = from;
+  }, [scale, from]);
+
+  return { scaleSpringStyle, start, reset };
 };

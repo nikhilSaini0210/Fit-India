@@ -22,7 +22,7 @@ import {
   initPushNotifications,
 } from '../services/noti';
 import { AuthStack } from './stacks';
-import { doRefresh, logoutFn, needsRefresh } from '../core';
+import { doRefresh, logoutFn, needsRefresh, verifyToken } from '../core';
 
 const resetToAuth = async () => {
   resetAndNavigate(ROOT_ROUTES.AUTH);
@@ -78,21 +78,31 @@ export const AppNavigator: FC<AppNavigatorProps> = ({ onReady }) => {
     const sub = AppState.addEventListener(
       'change',
       async (next: AppStateStatus) => {
-        const wasBackground =
-          appState.current.match(/inactive|background/) && next === 'active';
+        const prev = appState.current;
         appState.current = next;
+        const wasBackground =
+          prev.match(/inactive|background/) && next === 'active';
 
         logger.info(`App resumed → checking token: ${next}`, {
           tag: 'AppState',
         });
 
-        if (wasBackground) {
-          const { accessToken } = useAuthStore.getState();
-          if (accessToken && needsRefresh(accessToken)) {
-            await doRefresh().catch(() => {
-              logger.warn('Resume refresh failed', { tag: 'AppState' });
-            });
-          }
+        if (!wasBackground) return;
+
+        const { accessToken, refreshToken } = useAuthStore.getState();
+
+        if (!accessToken && !refreshToken) {
+          return;
+        }
+
+        const { valid, expired } = verifyToken(accessToken);
+
+        if (!valid || expired || needsRefresh(accessToken)) {
+          await doRefresh().catch(err => {
+            if (err?.response?.status === 401) {
+              logoutFn();
+            }
+          });
         }
       },
     );

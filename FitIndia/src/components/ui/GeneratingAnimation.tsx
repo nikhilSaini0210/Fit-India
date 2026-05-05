@@ -1,10 +1,11 @@
-import { Animated, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import { rs } from '../../utils';
 import { usePulse } from '../../hooks';
 import LinearGradient from 'react-native-linear-gradient';
 import Icon from './Icon';
 import { fonts } from '../../constants';
+import Animated from 'react-native-reanimated';
 
 interface Props {
   color: string;
@@ -13,7 +14,7 @@ interface Props {
 }
 
 const GeneratingAnimation: FC<Props> = ({ color, tips, iconName }) => {
-  const { scale, start: pulseStart } = usePulse(0.9, 1.1, 600);
+  const { pulseStyle, start: pulseStart } = usePulse(0.9, 1.1, 600);
   const [tipIdx, setTipIdx] = useState(0);
 
   useEffect(() => {
@@ -28,7 +29,7 @@ const GeneratingAnimation: FC<Props> = ({ color, tips, iconName }) => {
       colors={['#0F172A', '#0D2318', '#0F172A']}
       style={styles.genScreen}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
+      <Animated.View style={pulseStyle}>
         <LinearGradient
           colors={[color + '30', color + '10']}
           style={[styles.genIconBg, { borderColor: color + '40' }]}

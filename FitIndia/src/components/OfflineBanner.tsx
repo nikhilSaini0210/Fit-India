@@ -1,55 +1,62 @@
-import { Animated, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import { rs, useIsOnline, useSafeInsets } from '../utils';
-import { fonts } from '../constants';
+import { fonts, DURATION_MS, TIMING } from '../constants';
 import { useColors } from '../store';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
+import { runOnJS } from 'react-native-worklets';
 
 const OfflineBanner: FC = () => {
   const insets = useSafeInsets();
   const height = 44 + insets.top;
   const colors = useColors();
   const isOnline = useIsOnline();
-  const translateY = useRef(new Animated.Value(-height)).current;
+  const translateY = useSharedValue(-height);
+  const initialized = useRef(false);
 
   const [visibleText, setVisibleText] = useState('No internet connection');
 
+  const animStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: translateY.value }],
+  }));
+
   useEffect(() => {
+    if (isOnline === null) return;
+
+    if (!initialized.current) {
+      initialized.current = true;
+      return;
+    }
+
     if (!isOnline) {
-      setVisibleText('No internet connection');
+      runOnJS(setVisibleText)('No internet connection');
 
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 280,
-        useNativeDriver: true,
-      }).start();
+      translateY.value = withTiming(0, TIMING.slide);
     } else {
-      setVisibleText('Back online');
+      runOnJS(setVisibleText)('Back online');
 
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 280,
-        useNativeDriver: true,
-      }).start(() => {
-        setTimeout(() => {
-          Animated.timing(translateY, {
-            toValue: -height,
-            duration: 280,
-            useNativeDriver: true,
-          }).start();
-        }, 1200);
+      translateY.value = withTiming(0, TIMING.slide, () => {
+        translateY.value = withDelay(
+          DURATION_MS.show,
+          withTiming(-height, TIMING.hide),
+        );
       });
     }
-  }, [height, isOnline, translateY]);
+  }, [isOnline]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const dynamicStyle = {
     paddingTop: insets.top,
     height,
-    transform: [{ translateY }],
     backgroundColor: isOnline ? colors.success : colors.error,
   };
 
   return (
-    <Animated.View style={[styles.banner, dynamicStyle]}>
+    <Animated.View style={[styles.banner, animStyle, dynamicStyle]}>
       <Text style={[styles.text, { color: colors.white }]}>{visibleText}</Text>
     </Animated.View>
   );

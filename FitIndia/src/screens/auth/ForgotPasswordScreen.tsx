@@ -1,4 +1,4 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useColors } from '../../store';
 import { useFadeIn, useSlideUp } from '../../hooks';
@@ -6,6 +6,7 @@ import { goBack, navigate, rs } from '../../utils';
 import { Button, Header, Icon, Input, ScreenWrapper } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
+import Animated from 'react-native-reanimated';
 
 const ForgotPasswordScreen: FC = () => {
   const colors = useColors();
@@ -14,12 +15,8 @@ const ForgotPasswordScreen: FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { opacity: fadeOp, start: fadeStart } = useFadeIn(500, 100);
-  const {
-    opacity: slideOp,
-    translateY,
-    start: slideStart,
-  } = useSlideUp(30, 500, 200);
+  const { fadeStyle, start: fadeStart } = useFadeIn(500, 100);
+  const { slideStyle, start: slideStart } = useSlideUp(30, 500, 200);
 
   useEffect(() => {
     fadeStart();
@@ -59,11 +56,9 @@ const ForgotPasswordScreen: FC = () => {
         transparent
       />
 
-      <Animated.View style={[s.flex, { opacity: fadeOp }]}>
+      <Animated.View style={[s.flex, fadeStyle]}>
         {!sent ? (
-          <Animated.View
-            style={{ opacity: slideOp, transform: [{ translateY }] }}
-          >
+          <Animated.View style={slideStyle}>
             <View style={s.iconWrap}>
               <LinearGradient
                 colors={[colors.info + '20', colors.info + '08']}

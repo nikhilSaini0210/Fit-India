@@ -6,9 +6,6 @@ import {
   TAB_ACCENT,
   LABEL_MAX_WIDTH,
   LABEL_MAX_WIDTH_MAP,
-  TIMING_IN,
-  SPRING_DOT,
-  TIMING_OUT,
 } from './constants';
 import { fonts } from '../../constants/fonts';
 import { rs } from '../../utils';
@@ -20,6 +17,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { Icon } from '../../components';
+import { DURATION, SPRING, TIMING } from '../../constants';
 
 interface TabItemProps {
   route: string;
@@ -45,18 +43,17 @@ const TabItem: FC<TabItemProps> = ({
   const dotOpacity = useSharedValue(isFocused ? 1 : 0);
   const pillGlow = useSharedValue(isFocused ? 1 : 0);
 
-  // Only pill / dot / glow here — iconScale is NOT touched on focus change
   useEffect(() => {
     if (isFocused) {
-      progress.value = withTiming(1, TIMING_IN);
-      dotScale.value = withSpring(1, SPRING_DOT);
-      dotOpacity.value = withTiming(1, { duration: 160 });
-      pillGlow.value = withTiming(1, { duration: 220 });
+      progress.value = withTiming(1, TIMING.in);
+      dotScale.value = withSpring(1, SPRING.dot_in);
+      dotOpacity.value = withTiming(1, DURATION.dot_in);
+      pillGlow.value = withTiming(1, DURATION.glow_in);
     } else {
-      progress.value = withTiming(0, TIMING_OUT);
-      dotScale.value = withSpring(0, { damping: 18, stiffness: 220 });
-      dotOpacity.value = withTiming(0, { duration: 100 });
-      pillGlow.value = withTiming(0, { duration: 150 });
+      progress.value = withTiming(0, TIMING.out);
+      dotScale.value = withSpring(0, SPRING.dot_out);
+      dotOpacity.value = withTiming(0, DURATION.dot_out);
+      pillGlow.value = withTiming(0, DURATION.glow_out);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isFocused]);
@@ -71,7 +68,6 @@ const TabItem: FC<TabItemProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Finger up → spring back, then navigate
   const handlePressOut = useCallback(() => {
     iconScale.value = withSpring(1, { damping: 8, stiffness: 250, mass: 0.5 });
     onPress();

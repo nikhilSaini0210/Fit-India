@@ -77,7 +77,16 @@ export const initializeApp = async (): Promise<void> => {
 
           logger.info('Access expired → refreshing', { tag: 'Init' });
 
-          await withTimeout(doRefresh());
+          try {
+            await withTimeout(doRefresh());
+            setLoadingStep(0.4);
+          } catch (err) {
+            if (isAuthError(err)) {
+              await logoutFn().catch(() => {});
+              return;
+            }
+            logger.warn('Refresh failed but keeping session', { tag: 'Init' });
+          }
 
           logger.debug('New tokens received', {
             tag: 'Auth',

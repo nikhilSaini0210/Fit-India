@@ -1,45 +1,59 @@
 import React, { FC, useEffect } from 'react';
-import { View, Animated, StyleSheet, type ViewStyle } from 'react-native';
+import { View, StyleSheet, type ViewStyle } from 'react-native';
 import { useColors } from '../../store';
-import { useRef } from 'react';
 import { rs } from '../../utils';
 import { useShimmer } from '../../hooks';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 export const FullScreenLoader: FC = () => {
   const colors = useColors();
-  const pulse = useRef(new Animated.Value(0.4)).current;
+  const opacity = useSharedValue(0.4);
+  const rotate = useSharedValue(0);
+
+  const opacityStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
+
+  const spinStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ rotate: `${rotate.value * 360}deg` }],
+  }));
 
   useEffect(() => {
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulse, {
-          toValue: 1,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulse, {
-          toValue: 0.4,
-          duration: 700,
-          useNativeDriver: true,
-        }),
-      ]),
-    ).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(1, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.4, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
+      false,
+    );
+
+    rotate.value = withRepeat(
+      withTiming(1, { duration: 900, easing: Easing.linear }),
+      -1,
+      false,
+    );
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <View style={[s.fullScreen, { backgroundColor: colors.background }]}>
       <Animated.View
         style={[
           s.spinnerOuter,
-          { borderColor: colors.primary + '30', opacity: pulse },
+          { borderColor: colors.primary + '30' },
+          opacityStyle,
         ]}
       />
       <Animated.View
-        style={[
-          s.spinnerInner,
-          { borderTopColor: colors.primary, opacity: pulse },
-        ]}
+        style={[s.spinnerInner, { borderTopColor: colors.primary }, spinStyle]}
       />
     </View>
   );
@@ -60,7 +74,7 @@ export const Skeleton: FC<SkeletonProps> = ({
 }) => {
   const colors = useColors();
   const w = typeof width === 'number' ? width : rs.screenWidth - rs.scale(40);
-  const { translateX, start } = useShimmer(w);
+  const { shimmerStyle, start } = useShimmer(w);
 
   useEffect(() => {
     start();
@@ -83,8 +97,8 @@ export const Skeleton: FC<SkeletonProps> = ({
         style={[
           StyleSheet.absoluteFill,
           s.opacity,
+          shimmerStyle,
           {
-            transform: [{ translateX }],
             backgroundColor: colors.shimmerHighlight,
           },
         ]}

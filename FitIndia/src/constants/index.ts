@@ -3,3 +3,4 @@ export * from './routes';
 export * from './storage';
 export * from './fonts';
 export * from './colors';
+export * from "./animationConstants";

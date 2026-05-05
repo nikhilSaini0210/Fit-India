@@ -1,11 +1,12 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
-import React, { FC, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import React, { FC, useEffect } from 'react';
 import { rs } from '../../../utils';
 import { useColors } from '../../../store';
-import { usePulse } from '../../../hooks';
+import { usePulse, useSpringScale } from '../../../hooks';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts } from '../../../constants';
 import { Icon } from '../../../components';
+import Animated from 'react-native-reanimated';
 
 interface Props {
   current: number;
@@ -14,16 +15,12 @@ interface Props {
 
 const StreakRing: FC<Props> = ({ longest, current }) => {
   const colors = useColors();
-  const scaleAnim = useRef(new Animated.Value(0.5)).current;
-  const { scale: pulseScale, start: startPulse } = usePulse(0.97, 1.03, 1000);
+  const { scaleSpringStyle, start: startScale } = useSpringScale(0.5);
+
+  const { pulseStyle, start: startPulse } = usePulse(0.97, 1.03, 1000);
 
   useEffect(() => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      friction: 5,
-      tension: 80,
-      useNativeDriver: true,
-    }).start();
+    startScale();
     if (current > 0) startPulse();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [current]);
@@ -33,8 +30,8 @@ const StreakRing: FC<Props> = ({ longest, current }) => {
 
   return (
     <View style={styles.wrap}>
-      <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
-        <Animated.View style={{ transform: [{ scale: pulseScale }] }}>
+      <Animated.View style={scaleSpringStyle}>
+        <Animated.View style={pulseStyle}>
           <LinearGradient
             colors={[flameColor + '30', flameColor + '10']}
             start={{ x: 0, y: 0 }}

@@ -91,9 +91,8 @@ export const useAuthStore = create<AuthState>()(
         const { valid } = verifyToken(state.accessToken);
         if (valid) {
           state.isLoggedIn = true;
-          setTimeout(() => {
-            startRefreshScheduler();
-          }, 0);
+        } else if (state.refreshToken) {
+          state.isLoggedIn = true;
         } else {
           state.accessToken =
             state.refreshToken =

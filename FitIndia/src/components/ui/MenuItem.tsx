@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {  Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC } from 'react';
 import { useColors } from '../../store';
 import { usePressScale } from '../../hooks';
@@ -6,6 +6,7 @@ import Icon from './Icon';
 import { rs } from '../../utils';
 import { fonts } from '../../constants';
 import Badge from './Badge';
+import Animated from 'react-native-reanimated';
 
 interface MenuItemProps {
   icon: string;
@@ -28,7 +29,7 @@ const MenuItem: FC<MenuItemProps> = ({
   rightElement,
   colors,
 }) => {
-  const { scale, onPressIn, onPressOut } = usePressScale(0.97);
+  const { pressStyle, onPressIn, onPressOut } = usePressScale(0.97);
 
   return (
     <Pressable
@@ -37,7 +38,7 @@ const MenuItem: FC<MenuItemProps> = ({
       onPressOut={onPressOut}
       android_ripple={{ color: colors.primary + '15' }}
     >
-      <Animated.View style={[styles.menuItem, { transform: [{ scale }] }]}>
+      <Animated.View style={[styles.menuItem, pressStyle]}>
         <View
           style={[
             styles.menuIconWrap,

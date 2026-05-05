@@ -2,9 +2,10 @@ import { authApi } from '../services/api';
 import { useAuthStore } from '../store';
 import { logger } from '../utils';
 import { logoutFn } from './logoutFn';
+import { getOrStartRefresh } from './refreshLock';
 import { scheduleRefresh } from './scheduler';
 
-export const doRefresh = async () => {
+const _doRefreshOnce = async () => {
   const { refreshToken, setTokens } = useAuthStore.getState();
 
   if (!refreshToken) throw new Error('No refresh token');
@@ -19,6 +20,9 @@ export const doRefresh = async () => {
     refreshToken: data.refreshToken,
   });
 };
+
+export const doRefresh = async (): Promise<void> =>
+  getOrStartRefresh(_doRefreshOnce);
 
 export const startRefreshScheduler = () => {
   const { accessToken } = useAuthStore.getState();

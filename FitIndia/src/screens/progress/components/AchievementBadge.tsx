@@ -1,4 +1,4 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { FC, useEffect } from 'react';
 import { AchievementBadgeProps } from '../../../helper';
 import { rs } from '../../../utils';
@@ -6,6 +6,7 @@ import { useColors } from '../../../store';
 import { useScalePop } from '../../../hooks';
 import { Icon } from '../../../components';
 import { fonts } from '../../../constants';
+import Animated from 'react-native-reanimated';
 
 const AchievementBadge: FC<AchievementBadgeProps> = ({
   icon,
@@ -16,7 +17,7 @@ const AchievementBadge: FC<AchievementBadgeProps> = ({
   unlockedAt,
 }) => {
   const colors = useColors();
-  const { scale, start } = useScalePop(400);
+  const { scaleStyle, start } = useScalePop(400);
 
   useEffect(() => {
     if (unlocked) {
@@ -30,12 +31,11 @@ const AchievementBadge: FC<AchievementBadgeProps> = ({
       ? colors.backgroundCard
       : colors.backgroundSurface,
     borderColor: unlocked ? color + '40' : colors.borderMuted,
-    transform: [{ scale }],
     opacity: unlocked ? 1 : 0.45,
   };
 
   return (
-    <Animated.View style={[styles.wrap, dynamicStyle]}>
+    <Animated.View style={[styles.wrap, scaleStyle, dynamicStyle]}>
       <View
         style={[
           styles.iconBg,

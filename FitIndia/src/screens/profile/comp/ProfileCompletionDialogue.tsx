@@ -1,10 +1,11 @@
-import { View, Text, Animated, StyleSheet, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import React, { FC, useEffect } from 'react';
 import { useFadeIn } from '../../../hooks';
 import { rs } from '../../../utils';
 import { fonts } from '../../../constants';
 import { useColors } from '../../../store';
 import { Icon, universalStyles } from '../../../components';
+import Animated from 'react-native-reanimated';
 
 interface ProfileCompletionDialogueProps {
   pct: number;
@@ -16,7 +17,8 @@ const ProfileCompletionDialogue: FC<ProfileCompletionDialogueProps> = ({
   onEdit,
 }) => {
   const colors = useColors();
-  const { opacity: fadeOp, start: fadeStart } = useFadeIn(600, 100);
+
+  const { fadeStyle, start: fadeStart } = useFadeIn(500, 100);
 
   useEffect(() => {
     fadeStart();
@@ -27,8 +29,8 @@ const ProfileCompletionDialogue: FC<ProfileCompletionDialogueProps> = ({
     <Animated.View
       style={[
         s.completeCard,
+        fadeStyle,
         {
-          opacity: fadeOp,
           backgroundColor: colors.warningLight,
           borderColor: colors.warning + '40',
         },
