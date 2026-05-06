@@ -1,5 +1,4 @@
 import { useCallback, useRef } from 'react';
-import { Animated } from 'react-native';
 import {
   useAnimatedStyle,
   useSharedValue,
@@ -9,6 +8,7 @@ import {
   withSpring,
   withRepeat,
   withSequence,
+  makeMutable,
 } from 'react-native-reanimated';
 
 export const useFadeIn = (duration = 600, delay = 0) => {
@@ -134,36 +134,43 @@ export const useStagger = (
   staggerMs = 80,
   baseDuration = 500,
 ) => {
-  const anims = useRef(
-    Array.from({ length: count }, () => ({
-      opacity: new Animated.Value(0),
-      translateY: new Animated.Value(24),
-    })),
+  const opacities = useRef(
+    Array.from({ length: count }, () => makeMutable(0)),
   ).current;
 
-  const start = useCallback(() => {
-    Animated.stagger(
-      staggerMs,
-      anims.map(({ opacity, translateY }) =>
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 1,
-            duration: baseDuration,
-            easing: Easing.out(Easing.cubic),
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: 0,
-            duration: baseDuration,
-            easing: Easing.out(Easing.exp),
-            useNativeDriver: true,
-          }),
-        ]),
-      ),
-    ).start();
-  }, [anims, staggerMs, baseDuration]);
+  const translatesY = useRef(
+    Array.from({ length: count }, () => makeMutable(24)),
+  ).current;
 
-  return { anims, start };
+  const staggerStyles = opacities.map((opacity, i) =>
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useAnimatedStyle(() => ({
+      opacity: opacity.value,
+      transform: [{ translateY: translatesY[i].value }],
+    })),
+  );
+
+  const start = useCallback(() => {
+    opacities.forEach((opacity, i) => {
+      const delay = i * staggerMs;
+      opacity.value = withDelay(
+        delay,
+        withTiming(1, {
+          duration: baseDuration,
+          easing: Easing.out(Easing.cubic),
+        }),
+      );
+      translatesY[i].value = withDelay(
+        delay,
+        withTiming(0, {
+          duration: baseDuration,
+          easing: Easing.out(Easing.exp),
+        }),
+      );
+    });
+  }, [opacities, translatesY, staggerMs, baseDuration]);
+
+  return { staggerStyles, start };
 };
 
 export const useRotate = (duration = 1500) => {

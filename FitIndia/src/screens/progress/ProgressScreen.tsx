@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import {
   selectStreak,
@@ -10,7 +10,7 @@ import {
 } from '../../store';
 import { navigate, rs, useSafeInsets } from '../../utils';
 import {
-  useApiError,
+  // useApiError,
   useProgressHistory,
   useProgressSummary,
   useStagger,
@@ -28,8 +28,14 @@ import {
 } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts, PROGRESS_ROUTES, ROOT_ROUTES } from '../../constants';
-import { BMIGauge, StatDeltaCard, StreakCalendar, WeightChart } from './components';
+import {
+  BMIGauge,
+  StatDeltaCard,
+  StreakCalendar,
+  WeightChart,
+} from './components';
 import { PERIOD_OPTIONS, PERIOD_TYPES } from '../../helper';
+import Animated from 'react-native-reanimated';
 
 const ProgressScreen: FC = () => {
   const colors = useColors();
@@ -37,8 +43,8 @@ const ProgressScreen: FC = () => {
   const user = useAuthStore(selectUser);
   const summary = useProgressStore(selectSummary);
   const streak = useProgressStore(selectStreak);
-  const handleError = useApiError();
-  const { anims, start } = useStagger(5, 80, 400);
+  // const handleError = useApiError();
+  const { staggerStyles, start } = useStagger(5, 80, 400);
 
   const [period, setPeriod] = useState<'week' | 'month' | '3months' | 'year'>(
     'month',
@@ -137,12 +143,7 @@ const ProgressScreen: FC = () => {
       onRefresh={onRefresh}
       contentStyle={{ paddingBottom: insets.bottom + rs.verticalScale(32) }}
     >
-      <Animated.View
-        style={{
-          opacity: anims[0].opacity,
-          transform: [{ translateY: anims[0].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[0]}>
         <LinearGradient
           colors={[colors.primary + '20', colors.background]}
           style={[
@@ -300,12 +301,7 @@ const ProgressScreen: FC = () => {
         )}
 
         {(isLoading || summary) && (
-          <Animated.View
-            style={{
-              opacity: anims[1].opacity,
-              transform: [{ translateY: anims[1].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[1]}>
             <Text
               style={[
                 styles.sectionLabel,
@@ -376,12 +372,7 @@ const ProgressScreen: FC = () => {
           </Animated.View>
         )}
 
-        <Animated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[2]}>
           <View style={styles.sectionHeader}>
             <Text
               style={[
@@ -456,12 +447,7 @@ const ProgressScreen: FC = () => {
         </Animated.View>
 
         {bmi && !isLoading && (
-          <Animated.View
-            style={{
-              opacity: anims[3].opacity,
-              transform: [{ translateY: anims[3].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[3]}>
             <Text
               style={[
                 styles.sectionLabel,
@@ -476,12 +462,7 @@ const ProgressScreen: FC = () => {
           </Animated.View>
         )}
 
-        <Animated.View
-          style={{
-            opacity: anims[4].opacity,
-            transform: [{ translateY: anims[4].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[4]}>
           <View style={styles.sectionHeader}>
             <Text
               style={[

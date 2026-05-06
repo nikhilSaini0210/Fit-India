@@ -24,4 +24,7 @@ export const universalStyles = StyleSheet.create({
   bottomZero: {
     marginBottom: 0,
   },
+  leftAuto: {
+    marginLeft: 'auto',
+  },
 });

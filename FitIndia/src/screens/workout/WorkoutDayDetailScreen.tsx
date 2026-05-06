@@ -1,4 +1,4 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect } from 'react';
 import { WorkoutStackScreenProps } from '../../types';
 import { useColors } from '../../store';
@@ -18,6 +18,7 @@ import { fonts, ROOT_ROUTES, WORKOUT_ROUTES } from '../../constants';
 import { FOCUS_META } from '../../helper';
 import LinearGradient from 'react-native-linear-gradient';
 import { ExerciseCard } from './components';
+import Animated from 'react-native-reanimated';
 
 type Props = WorkoutStackScreenProps<'WorkoutDayDetail'>;
 
@@ -32,7 +33,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
     plan?.weeklyPlan?.find((d: any) => d.day === dayNumber) ??
     plan?.weeklyPlan?.[0];
 
-  const { anims, start } = useStagger(4, 80, 400);
+  const { staggerStyles, start } = useStagger(4, 80, 400);
 
   useEffect(() => {
     if (workout) {
@@ -127,12 +128,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
           paddingBottom: insets.bottom + rs.verticalScale(100),
         }}
       >
-        <Animated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[0]}>
           <LinearGradient
             colors={[meta.color + '30', meta.color + '08']}
             style={s.hero}
@@ -169,15 +165,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
         </Animated.View>
 
         {!isRest && (
-          <Animated.View
-            style={[
-              s.chipsRow,
-              {
-                opacity: anims[1].opacity,
-                transform: [{ translateY: anims[1].translateY }],
-              },
-            ]}
-          >
+          <Animated.View style={[s.chipsRow, staggerStyles[1]]}>
             <StatChip
               icon="clock-outline"
               value={`${workout.duration} min`}
@@ -208,12 +196,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
         <View style={s.sections}>
           {/* ── Warm-up ── */}
           {workout.warmup?.length > 0 && (
-            <Animated.View
-              style={{
-                opacity: anims[1].opacity,
-                transform: [{ translateY: anims[1].translateY }],
-              }}
-            >
+            <Animated.View style={staggerStyles[1]}>
               <Text
                 style={[
                   s.sectionTitle,
@@ -264,12 +247,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
 
           {/* ── Main exercises ── */}
           {!isRest && workout.exercises?.length > 0 && (
-            <Animated.View
-              style={{
-                opacity: anims[2].opacity,
-                transform: [{ translateY: anims[2].translateY }],
-              }}
-            >
+            <Animated.View style={staggerStyles[2]}>
               <Text
                 style={[
                   s.sectionTitle,
@@ -286,15 +264,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
 
           {/* ── Rest day illustration ── */}
           {isRest && (
-            <Animated.View
-              style={[
-                s.restCard,
-                {
-                  opacity: anims[2].opacity,
-                  transform: [{ translateY: anims[2].translateY }],
-                },
-              ]}
-            >
+            <Animated.View style={[s.restCard, staggerStyles[2]]}>
               <Card>
                 <View style={s.restContent}>
                   <Text style={s.restEmoji}>😴</Text>
@@ -352,12 +322,7 @@ const WorkoutDayDetailScreen: FC<Props> = ({ route }) => {
 
           {/* ── Cool-down ── */}
           {workout.cooldown?.length > 0 && (
-            <Animated.View
-              style={{
-                opacity: anims[3].opacity,
-                transform: [{ translateY: anims[3].translateY }],
-              }}
-            >
+            <Animated.View style={staggerStyles[3]}>
               <Text
                 style={[
                   s.sectionTitle,

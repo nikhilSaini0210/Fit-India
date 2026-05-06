@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {  Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useEffect, useState } from 'react';
 import { goBack, rs, useSafeInsets } from '../../utils';
 import {
@@ -16,6 +16,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { FOCUS_OPTIONS, quickTips, TYPE_OPTIONS } from '../../helper';
 import { fonts } from '../../constants';
 import { ExerciseRow } from './components';
+import Animated from 'react-native-reanimated';
 
 const QuickWorkoutScreen: FC = () => {
   const colors = useColors();
@@ -28,7 +29,7 @@ const QuickWorkoutScreen: FC = () => {
   const [generating, setGenerating] = useState(false);
   const [workout, setWorkout] = useState<any>(null);
 
-  const { anims, start } = useStagger(3, 80, 400);
+  const { staggerStyles, start } = useStagger(3, 80, 400);
 
   useEffect(() => {
     start();
@@ -76,10 +77,7 @@ const QuickWorkoutScreen: FC = () => {
           <>
             {/* Focus selector */}
             <Animated.View
-              style={{
-                opacity: anims[0].opacity,
-                transform: [{ translateY: anims[0].translateY }],
-              }}
+              style={staggerStyles[0]}
             >
               <Text
                 style={[
@@ -131,10 +129,7 @@ const QuickWorkoutScreen: FC = () => {
 
             {/* Type selector */}
             <Animated.View
-              style={{
-                opacity: anims[1].opacity,
-                transform: [{ translateY: anims[1].translateY }],
-              }}
+              style={staggerStyles[1]}
             >
               <Text
                 style={[
@@ -202,10 +197,7 @@ const QuickWorkoutScreen: FC = () => {
 
             {/* Generate CTA */}
             <Animated.View
-              style={{
-                opacity: anims[2].opacity,
-                transform: [{ translateY: anims[2].translateY }],
-              }}
+              style={staggerStyles[2]}
             >
               <Button
                 label={`Generate ${focusCfg.label} Workout`}

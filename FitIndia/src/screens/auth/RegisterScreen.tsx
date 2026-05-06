@@ -1,5 +1,4 @@
 import {
-  Animated,
   Keyboard,
   StyleSheet,
   Text,
@@ -15,6 +14,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { goBack, navigate, rs } from '../../utils';
 import { AUTH_ROUTES, fonts, ROOT_ROUTES } from '../../constants';
 import { useToast } from '../../context';
+import Animated from 'react-native-reanimated';
 
 const RegisterScreen: FC = () => {
   const colors = useColors();
@@ -29,7 +29,7 @@ const RegisterScreen: FC = () => {
   const [confirm, setConfirm] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const { anims, start } = useStagger(5, 70, 450);
+  const { staggerStyles, start } = useStagger(5, 70, 450);
 
   useEffect(() => {
     start();
@@ -100,12 +100,7 @@ const RegisterScreen: FC = () => {
         pointerEvents="none"
       />
 
-      <Animated.View
-        style={{
-          opacity: anims[0].opacity,
-          transform: [{ translateY: anims[0].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[0]}>
         <Text
           style={[
             s.headline,
@@ -124,7 +119,7 @@ const RegisterScreen: FC = () => {
         </Text>
       </Animated.View>
 
-      <Animated.View style={[s.pillsRow, { opacity: anims[0].opacity }]}>
+      <Animated.View style={[s.pillsRow, staggerStyles[0]]}>
         {['🥗 Indian diet plans', '💪 AI workouts', '📊 Progress tracking'].map(
           (t, i) => (
             <View
@@ -150,12 +145,7 @@ const RegisterScreen: FC = () => {
         )}
       </Animated.View>
 
-      <Animated.View
-        style={{
-          opacity: anims[1].opacity,
-          transform: [{ translateY: anims[1].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[1]}>
         <Input
           label="Full name"
           iconLeft="account-outline"
@@ -170,12 +160,7 @@ const RegisterScreen: FC = () => {
         />
       </Animated.View>
 
-      <Animated.View
-        style={{
-          opacity: anims[2].opacity,
-          transform: [{ translateY: anims[2].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[2]}>
         <Input
           label="Email address"
           iconLeft="email-outline"
@@ -204,12 +189,7 @@ const RegisterScreen: FC = () => {
         />
       </Animated.View>
 
-      <Animated.View
-        style={{
-          opacity: anims[3].opacity,
-          transform: [{ translateY: anims[3].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[3]}>
         <Input
           label="Password"
           iconLeft="lock-outline"
@@ -237,7 +217,7 @@ const RegisterScreen: FC = () => {
         />
       </Animated.View>
 
-      <Animated.View style={{ opacity: anims[3].opacity }}>
+      <Animated.View style={staggerStyles[3]}>
         <Text
           style={[
             s.terms,
@@ -250,15 +230,7 @@ const RegisterScreen: FC = () => {
         </Text>
       </Animated.View>
 
-      <Animated.View
-        style={[
-          s.btnWrap,
-          {
-            opacity: anims[4].opacity,
-            transform: [{ translateY: anims[4].translateY }],
-          },
-        ]}
-      >
+      <Animated.View style={[s.btnWrap, staggerStyles[4]]}>
         <Button
           label="Create free account"
           onPress={handleRegister}

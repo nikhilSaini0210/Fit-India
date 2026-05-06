@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import {  Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { selectUser, useAuthStore, useColors } from '../../store';
 import {
@@ -29,6 +29,7 @@ import {
 } from '../../components';
 import { DietLabel, GoalLabel, TIPS } from '../../helper';
 import { useModal } from '../../context';
+import Animated from 'react-native-reanimated';
 
 const GenerateDietScreen: FC = () => {
   const colors = useColors();
@@ -41,7 +42,7 @@ const GenerateDietScreen: FC = () => {
   const [useAI, setUseAI] = useState(true);
 
   const { mutate, loading } = useGenerateDietPlan();
-  const { anims, start } = useStagger(4, 100, 450);
+  const { staggerStyles, start } = useStagger(4, 100, 450);
 
   useEffect(() => {
     start();
@@ -131,10 +132,7 @@ const GenerateDietScreen: FC = () => {
         ]}
       >
         <Animated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
+          style={staggerStyles[0]}
         >
           <LinearGradient
             colors={[colors.primary + '20', colors.primary + '05']}
@@ -198,10 +196,7 @@ const GenerateDietScreen: FC = () => {
         </Animated.View>
 
         <Animated.View
-          style={{
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          }}
+          style={staggerStyles[1]}
         >
           <Text
             style={[
@@ -233,10 +228,7 @@ const GenerateDietScreen: FC = () => {
         </Animated.View>
 
         <Animated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
+          style={staggerStyles[2]}
         >
           <Text
             style={[
@@ -348,10 +340,7 @@ const GenerateDietScreen: FC = () => {
         </Animated.View>
 
         <Animated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
+          style={staggerStyles[3]}
         >
           <Text
             style={[

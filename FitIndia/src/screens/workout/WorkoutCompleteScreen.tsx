@@ -1,4 +1,10 @@
-import { Animated as RNAnimated, Share, StyleSheet, Text, View } from 'react-native';
+import {
+  Animated as RNAnimated,
+  Share,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { WorkoutStackScreenProps } from '../../types';
 import { selectUser, useAuthStore, useColors } from '../../store';
@@ -21,7 +27,7 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
 
   const { scaleStyle, start: trophyPop } = useScalePop(800);
   const { pulseStyle, start: pulseStart } = usePulse(0.96, 1.04, 1000);
-  const { anims, start: staggerStart } = useStagger(3, 120, 500);
+  const { staggerStyles, start: staggerStart } = useStagger(3, 120, 500);
 
   const titleOpacity = useRef(new RNAnimated.Value(0)).current;
   const titleY = useRef(new RNAnimated.Value(40)).current;
@@ -172,15 +178,7 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
         </RNAnimated.View>
 
         {/* Stats */}
-        <RNAnimated.View
-          style={[
-            s.statsGrid,
-            {
-              opacity: anims[0].opacity,
-              transform: [{ translateY: anims[0].translateY }],
-            },
-          ]}
-        >
+        <Animated.View style={[s.statsGrid, staggerStyles[0]]}>
           <AchievementStat
             icon="fire"
             value={`${caloriesBurned}`}
@@ -199,18 +197,10 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
             label="Completed"
             color={colors.primary}
           />
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* Streak encouragement */}
-        <RNAnimated.View
-          style={[
-            s.streakCard,
-            {
-              opacity: anims[1].opacity,
-              transform: [{ translateY: anims[1].translateY }],
-            },
-          ]}
-        >
+        <Animated.View style={[s.streakCard, staggerStyles[1]]}>
           <LinearGradient
             colors={[colors.primary + '20', colors.primary + '08']}
             style={[s.streakGrad, { borderColor: colors.primary + '30' }]}
@@ -230,18 +220,10 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
               Keep your streak alive! Log your next workout tomorrow.
             </Text>
           </LinearGradient>
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* Actions */}
-        <RNAnimated.View
-          style={[
-            s.actions,
-            {
-              opacity: anims[2].opacity,
-              transform: [{ translateY: anims[2].translateY }],
-            },
-          ]}
-        >
+        <Animated.View style={[s.actions, staggerStyles[2]]}>
           <Button label="Back to home" onPress={onWorkoutToday} size="lg" />
           <View style={s.secondaryRow}>
             <Button
@@ -263,7 +245,7 @@ const WorkoutCompleteScreen: FC<Props> = ({ route }) => {
               style={universalStyles.flex}
             />
           </View>
-        </RNAnimated.View>
+        </Animated.View>
       </View>
     </ScreenWrapper>
   );

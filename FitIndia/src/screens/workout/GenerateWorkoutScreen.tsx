@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { selectUser, useAuthStore, useColors } from '../../store';
 import {
@@ -34,6 +34,7 @@ import {
 import { WORKOUT_TIPS } from '../../helper';
 import LinearGradient from 'react-native-linear-gradient';
 import { FocusCard } from './components';
+import Animated from 'react-native-reanimated';
 
 const GenerateWorkoutScreen: FC = () => {
   const colors = useColors();
@@ -50,7 +51,8 @@ const GenerateWorkoutScreen: FC = () => {
   );
 
   const { mutate, loading } = useGenerateWorkoutPlan();
-  const { anims, start } = useStagger(5, 90, 400);
+  const { staggerStyles, start } = useStagger(5, 90, 400);
+
   useEffect(() => {
     start();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,12 +147,7 @@ const GenerateWorkoutScreen: FC = () => {
           { paddingBottom: insets.bottom + rs.verticalScale(24) },
         ]}
       >
-        <Animated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[0]}>
           <LinearGradient
             colors={[colors.primary + '20', colors.primary + '05']}
             style={styles.hero}
@@ -210,12 +207,7 @@ const GenerateWorkoutScreen: FC = () => {
           </LinearGradient>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[1]}>
           <Text
             style={[
               styles.label,
@@ -254,12 +246,7 @@ const GenerateWorkoutScreen: FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[2]}>
           <Text
             style={[
               styles.label,
@@ -306,12 +293,7 @@ const GenerateWorkoutScreen: FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[3]}>
           <Text
             style={[
               styles.label,
@@ -340,12 +322,7 @@ const GenerateWorkoutScreen: FC = () => {
           </Card>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[4].opacity,
-            transform: [{ translateY: anims[4].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[4]}>
           <Text
             style={[
               styles.label,

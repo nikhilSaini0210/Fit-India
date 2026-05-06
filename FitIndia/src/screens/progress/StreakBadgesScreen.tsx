@@ -1,8 +1,8 @@
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import React, { FC, useEffect } from 'react';
 import { useStagger, useStreak } from '../../hooks';
 import {
-  selectLatestLog,
+  // selectLatestLog,
   selectStreak,
   selectSummary,
   selectUser,
@@ -23,7 +23,8 @@ import {
 } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts } from '../../constants';
-import { AchievementBadge, StreakCalendar, StreakRing } from './components';
+import { AchievementBadge, StreakRing } from './components';
+import Animated from 'react-native-reanimated';
 
 const StreakBadgesScreen: FC = () => {
   const colors = useColors();
@@ -31,9 +32,9 @@ const StreakBadgesScreen: FC = () => {
   const user = useAuthStore(selectUser);
   const streak = useProgressStore(selectStreak);
   const summary = useProgressStore(selectSummary);
-  const latestLog = useProgressStore(selectLatestLog);
+  // const latestLog = useProgressStore(selectLatestLog);
   const { loading } = useStreak();
-  const { anims, start } = useStagger(5, 90, 450);
+  const { staggerStyles, start } = useStagger(5, 90, 450);
 
   useEffect(() => {
     start();
@@ -69,12 +70,7 @@ const StreakBadgesScreen: FC = () => {
           { paddingBottom: insets.bottom + rs.verticalScale(32) },
         ]}
       >
-        <Animated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[0]}>
           <LinearGradient
             colors={[colors.primary + '18', colors.background]}
             style={styles.hero}
@@ -108,12 +104,7 @@ const StreakBadgesScreen: FC = () => {
           </LinearGradient>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[1]}>
           <Card style={styles.statsCard}>
             {[
               {
@@ -185,12 +176,7 @@ const StreakBadgesScreen: FC = () => {
           </Card>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[2]}>
           <Text
             style={[
               styles.sectionLabel,
@@ -206,12 +192,7 @@ const StreakBadgesScreen: FC = () => {
           )} */}
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[3]}>
           <View style={styles.badgesHeader}>
             <Text
               style={[
@@ -236,7 +217,7 @@ const StreakBadgesScreen: FC = () => {
           </View>
         </Animated.View>
 
-        <Animated.View style={{ opacity: anims[4].opacity }}>
+        <Animated.View style={staggerStyles[4]}>
           <Card
             gradient
             gradientColors={[colors.primary + '20', colors.primary + '08']}

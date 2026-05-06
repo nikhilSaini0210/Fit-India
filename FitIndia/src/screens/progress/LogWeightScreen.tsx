@@ -1,5 +1,5 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { goBack, rs, useSafeInsets } from '../../utils';
 import {
   Button,
@@ -20,8 +20,13 @@ import {
 import { useApiError, useLogProgress, useStagger } from '../../hooks';
 import { ProgressStackScreenProps } from '../../types';
 import LinearGradient from 'react-native-linear-gradient';
-import { fonts } from '../../constants';
+import { EASING, fonts } from '../../constants';
 import { MOODS } from '../../helper';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 
 type Props = ProgressStackScreenProps<'LogWeight'>;
 
@@ -50,8 +55,20 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
   );
 
   const { mutate, loading } = useLogProgress();
-  const { anims, start } = useStagger(4, 80, 400);
-  const measureAnim = useRef(new Animated.Value(0)).current;
+  const { staggerStyles, start } = useStagger(4, 80, 400);
+  const measureOpen = useSharedValue(0);
+
+  const measureStyle = useAnimatedStyle(() => ({
+    maxHeight: withTiming(measureOpen.value === 1 ? 400 : 0, {
+      duration: 300,
+      easing: EASING.out_exp,
+    }),
+    opacity: withTiming(measureOpen.value, {
+      duration: 250,
+      easing: EASING.out_exp,
+    }),
+    overflow: 'hidden',
+  }));
 
   useEffect(() => {
     start();
@@ -64,26 +81,21 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
   }, []);
 
   useEffect(() => {
-    Animated.timing(measureAnim, {
-      toValue: showMeasurements ? 1 : 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showMeasurements]);
+    measureOpen.value = showMeasurements ? 1 : 0;
+  }, [showMeasurements, measureOpen]);
 
-  const validate = (): boolean => {
-    const e: Record<string, string> = {};
-    const w = parseFloat(weight);
-    if (!weight) e.weight = 'Weight is required';
-    else if (isNaN(w)) e.weight = 'Enter a valid number';
-    else if (w < 20 || w > 300) e.weight = 'Weight must be between 20–300 kg';
-    setErrors(e);
-    return Object.keys(e).length === 0;
-  };
+  // const validate = (): boolean => {
+  //   const e: Record<string, string> = {};
+  //   const w = parseFloat(weight);
+  //   if (!weight) e.weight = 'Weight is required';
+  //   else if (isNaN(w)) e.weight = 'Enter a valid number';
+  //   else if (w < 20 || w > 300) e.weight = 'Weight must be between 20–300 kg';
+  //   setErrors(e);
+  //   return Object.keys(e).length === 0;
+  // };
 
   const handleLog = useCallback(async () => {
-    if (!validate()) return;
+    // if (!validate()) return;
 
     const body: Parameters<typeof mutate>[0] = {
       weight: parseFloat(weight),
@@ -110,7 +122,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
       });
     }
   }, [
-    validate,
+    // validate,
     weight,
     mood,
     logDate,
@@ -131,6 +143,22 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
     ? parseFloat((weightNum - prevWeight).toFixed(1))
     : null;
   const goal = user?.goal;
+
+  const getMoodButtonStyle = (isActive: boolean) => ({
+    backgroundColor: isActive
+      ? colors.primary + '15'
+      : colors.backgroundSurface,
+
+    borderColor: isActive ? colors.primary : colors.border,
+
+    borderWidth: isActive ? 2 : 1,
+  });
+
+  const getMoodLabelStyle = (isActive: boolean) => ({
+    color: isActive ? colors.primary : colors.textTertiary,
+
+    fontFamily: fonts.Regular,
+  });
 
   return (
     <ScreenWrapper keyboard>
@@ -153,12 +181,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
           { paddingBottom: insets.bottom + rs.verticalScale(24) },
         ]}
       >
-        <Animated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[0]}>
           <Card style={styles.weightCard}>
             <LinearGradient
               colors={[colors.primary + '15', colors.primary + '05']}
@@ -282,12 +305,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
           </Card>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[1]}>
           <Text
             style={[
               styles.sectionLabel,
@@ -297,47 +315,27 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
             HOW ARE YOU FEELING?
           </Text>
           <View style={styles.moodRow}>
-            {MOODS.map(m => (
-              <Pressable
-                key={m.value}
-                onPress={() => setMood(m.value)}
-                style={[
-                  styles.moodBtn,
-                  {
-                    backgroundColor:
-                      mood === m.value
-                        ? colors.primary + '15'
-                        : colors.backgroundSurface,
-                    borderColor:
-                      mood === m.value ? colors.primary : colors.border,
-                    borderWidth: mood === m.value ? 2 : 1,
-                  },
-                ]}
-              >
-                <Text style={styles.moodEmoji}>{m.emoji}</Text>
-                <Text
-                  style={[
-                    styles.moodLabel,
-                    {
-                      color:
-                        mood === m.value ? colors.primary : colors.textTertiary,
-                      fontFamily: fonts.Regular,
-                    },
-                  ]}
+            {MOODS.map(m => {
+              const isActive = mood === m.value;
+
+              return (
+                <Pressable
+                  key={m.value}
+                  onPress={() => setMood(m.value)}
+                  style={[styles.moodBtn, getMoodButtonStyle(isActive)]}
                 >
-                  {m.label}
-                </Text>
-              </Pressable>
-            ))}
+                  <Text style={styles.moodEmoji}>{m.emoji}</Text>
+
+                  <Text style={[styles.moodLabel, getMoodLabelStyle(isActive)]}>
+                    {m.label}
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[2]}>
           <Input
             label="Body fat % (optional)"
             iconLeft="percent-outline"
@@ -357,12 +355,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
           />
         </Animated.View>
 
-        <Animated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[3]}>
           <Pressable
             onPress={() => setShowMeasurements(v => !v)}
             style={[
@@ -392,21 +385,13 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
               name={showMeasurements ? 'chevron-up' : 'chevron-down'}
               size={rs.scale(18)}
               color={colors.textTertiary}
-              style={{ marginLeft: 'auto' }}
+              style={universalStyles.leftAuto}
             />
           </Pressable>
 
-          <Animated.View
-            style={{
-              maxHeight: measureAnim.interpolate({
-                inputRange: [0, 1],
-                outputRange: [0, 400],
-              }),
-              overflow: 'hidden',
-            }}
-          >
+          <Animated.View style={measureStyle}>
             <View style={styles.measureGrid}>
-              <View style={{ flex: 1 }}>
+              <View style={universalStyles.flex}>
                 <Input
                   label="Chest (cm)"
                   iconLeft="human-male"
@@ -416,7 +401,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
                   containerStyle={{ marginBottom: rs.verticalScale(12) }}
                 />
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={universalStyles.flex}>
                 <Input
                   label="Waist (cm)"
                   iconLeft="human"
@@ -428,7 +413,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
               </View>
             </View>
             <View style={styles.measureGrid}>
-              <View style={{ flex: 1 }}>
+              <View style={universalStyles.flex}>
                 <Input
                   label="Hips (cm)"
                   iconLeft="human-male"
@@ -438,7 +423,7 @@ const LogWeightScreen: FC<Props> = ({ route }) => {
                   containerStyle={{ marginBottom: rs.verticalScale(12) }}
                 />
               </View>
-              <View style={{ flex: 1 }}>
+              <View style={universalStyles.flex}>
                 <Input
                   label="Arms (cm)"
                   iconLeft="arm-flex"

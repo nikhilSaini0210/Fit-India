@@ -1,6 +1,5 @@
 import {
   Alert,
-  Animated,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -14,6 +13,7 @@ import { PLANS } from '../../helper';
 import { Header, Icon, ScreenWrapper } from '../../components';
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts } from '../../constants';
+import Animated from 'react-native-reanimated';
 
 const SubscriptionScreen: FC = () => {
   const colors = useColors();
@@ -25,7 +25,7 @@ const SubscriptionScreen: FC = () => {
   const handleError = useApiError();
   const [purchasing, setPurchasing] = useState<string | null>(null);
 
-  const { anims, start } = useStagger(PLANS.length, 100, 450);
+  const { staggerStyles, start } = useStagger(PLANS.length, 100, 450);
 
   useEffect(() => {
     start();
@@ -100,10 +100,7 @@ const SubscriptionScreen: FC = () => {
           return (
             <Animated.View
               key={plan.id}
-              style={{
-                opacity: anims[i].opacity,
-                transform: [{ translateY: anims[i].translateY }],
-              }}
+              style={staggerStyles[i]}
             >
               <View
                 style={[

@@ -1,11 +1,5 @@
-import {
-  Animated as RNAnimated,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import { ProgressLog, ProgressStackScreenProps } from '../../types';
 import { selectSummary, useColors, useProgressStore } from '../../store';
 import { goBack, navigate, rs, useSafeInsets } from '../../utils';
@@ -24,6 +18,7 @@ import {
   NoDataState,
   ScreenWrapper,
   Skeleton,
+  universalStyles,
 } from '../../components';
 import { fonts, PROGRESS_ROUTES, ROOT_ROUTES } from '../../constants';
 import {
@@ -32,7 +27,11 @@ import {
   StatDeltaCard,
   WeightChart,
 } from './components';
-import Animated from 'react-native-reanimated';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 type Props = ProgressStackScreenProps<'ProgressCharts'>;
 
@@ -47,7 +46,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
   const [chartTab, setChartTab] = useState<ChartTab>('weight');
 
   const { fadeStyle, start } = useFadeIn(500);
-  const { anims, start: staggerStart } = useStagger(4, 80, 400);
+  const { staggerStyles, start: staggerStart } = useStagger(4, 80, 400);
 
   useEffect(() => {
     start();
@@ -77,23 +76,23 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
 
   const bmi =
     latestLog?.weight && summary
-      ? parseFloat(
-          (latestLog.weight / Math.pow(/* height cm → m */ 1.7, 2)).toFixed(1),
-        )
+      ? parseFloat((latestLog.weight / Math.pow(1.7, 2)).toFixed(1))
       : null;
 
-  const tabIndicatorX = useRef(new RNAnimated.Value(0)).current;
   const tabWidth = (rs.screenWidth - rs.scale(32)) / 3;
+  const tabIndicatorX = useSharedValue(0);
+
+  const tabIndicatorStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: tabIndicatorX.value }],
+  }));
 
   const switchTab = useCallback(
     (tab: ChartTab, idx: number) => {
       setChartTab(tab);
-      RNAnimated.spring(tabIndicatorX, {
-        toValue: idx * tabWidth,
-        friction: 8,
-        tension: 100,
-        useNativeDriver: false,
-      }).start();
+      tabIndicatorX.value = withSpring(idx * tabWidth, {
+        damping: 18,
+        stiffness: 200,
+      });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [tabWidth],
@@ -129,12 +128,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
         onRefresh={refresh}
       >
         {/* ── Period selector ── */}
-        <RNAnimated.View
-          style={{
-            opacity: anims[0].opacity,
-            transform: [{ translateY: anims[0].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[0]}>
           <View
             style={[s.periodRow, { backgroundColor: colors.backgroundSurface }]}
           >
@@ -157,7 +151,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
                       s.periodLabel,
                       {
                         fontFamily: isActive ? fonts.Bold : fonts.Regular,
-                        color: isActive ? '#FFF' : colors.textTertiary,
+                        color: isActive ? colors.white : colors.textTertiary,
                       },
                     ]}
                   >
@@ -167,18 +161,10 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
               );
             })}
           </View>
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* ── Delta cards ── */}
-        <RNAnimated.View
-          style={[
-            s.deltaRow,
-            {
-              opacity: anims[1].opacity,
-              transform: [{ translateY: anims[1].translateY }],
-            },
-          ]}
-        >
+        <Animated.View style={[s.deltaRow, staggerStyles[1]]}>
           <StatDeltaCard
             label="Weight change"
             value={
@@ -199,7 +185,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
             subtitle={`Over ${
               PERIODS.find(p => p.value === period)?.days
             } days`}
-            style={{ flex: 1 }}
+            style={universalStyles.flex}
           />
           <StatDeltaCard
             label="Logs recorded"
@@ -207,12 +193,12 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
             icon="calendar-check-outline"
             trend="neutral"
             subtitle="Total entries"
-            style={{ flex: 1 }}
+            style={universalStyles.flex}
           />
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* ── Chart tab switcher ── */}
-        <RNAnimated.View style={{ opacity: anims[2].opacity }}>
+        <Animated.View style={staggerStyles[2]}>
           <View style={[s.tabRow, { borderBottomColor: colors.border }]}>
             {(['weight', 'measurements', 'bmi'] as ChartTab[]).map((tab, i) => {
               const labels = {
@@ -243,26 +229,21 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
             })}
 
             {/* Sliding underline */}
-            <RNAnimated.View
+            <Animated.View
               style={[
                 s.tabIndicator,
                 {
                   backgroundColor: colors.primary,
                   width: tabWidth,
-                  left: tabIndicatorX,
                 },
+                tabIndicatorStyle,
               ]}
             />
           </View>
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* ── Chart content ── */}
-        <RNAnimated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[3]}>
           {/* Weight chart */}
           {chartTab === 'weight' && (
             <Card style={s.chartCard}>
@@ -504,7 +485,7 @@ const ProgressChartsScreen: FC<Props> = ({ route }) => {
               )}
             </Card>
           )}
-        </RNAnimated.View>
+        </Animated.View>
 
         {/* Log weight CTA */}
         <Pressable

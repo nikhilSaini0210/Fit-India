@@ -1,4 +1,4 @@
-import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import React, { FC, useCallback, useEffect } from 'react';
 import { selectUser, useAuthStore, useColors } from '../../store';
 import { navigate, rs, useSafeInsets } from '../../utils';
@@ -21,13 +21,14 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { fonts, ROOT_ROUTES, WORKOUT_ROUTES } from '../../constants';
 import { ExerciseCard } from './components';
+import Animated from 'react-native-reanimated';
 
 const WorkoutTodayScreen: FC = () => {
   const colors = useColors();
   const insets = useSafeInsets();
   const user = useAuthStore(selectUser);
   //   const handleError = useApiError();
-  const { anims, start } = useStagger(4, 80, 450);
+  const { staggerStyles, start } = useStagger(4, 80, 450);
 
   const {
     data: todayData,
@@ -108,12 +109,7 @@ const WorkoutTodayScreen: FC = () => {
       onRefresh={refresh}
       contentStyle={{ paddingBottom: insets.bottom + rs.verticalScale(32) }}
     >
-      <Animated.View
-        style={{
-          opacity: anims[0].opacity,
-          transform: [{ translateY: anims[0].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[0]}>
         <LinearGradient
           colors={
             hasPlan
@@ -228,19 +224,14 @@ const WorkoutTodayScreen: FC = () => {
 
       <View style={{ paddingHorizontal: rs.scale(16) }}>
         {loading && (
-          <Animated.View style={{ opacity: anims[1].opacity }}>
+          <Animated.View style={staggerStyles[1]}>
             <CardSkeleton />
             <CardSkeleton />
           </Animated.View>
         )}
 
         {!loading && !hasPlan && (
-          <Animated.View
-            style={{
-              opacity: anims[1].opacity,
-              transform: [{ translateY: anims[1].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[1]}>
             <Card style={s.noPlanCard}>
               <View
                 style={[
@@ -278,12 +269,7 @@ const WorkoutTodayScreen: FC = () => {
         )}
 
         {!loading && hasPlan && isRest && (
-          <Animated.View
-            style={{
-              opacity: anims[1].opacity,
-              transform: [{ translateY: anims[1].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[1]}>
             <Card style={s.restCard}>
               <Text
                 style={[universalStyles.textCenter, { fontSize: rs.scale(56) }]}
@@ -319,12 +305,7 @@ const WorkoutTodayScreen: FC = () => {
         )}
 
         {!loading && hasPlan && !isRest && (
-          <Animated.View
-            style={{
-              opacity: anims[2].opacity,
-              transform: [{ translateY: anims[2].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[2]}>
             {/* Warmup */}
             {workout?.warmup?.length > 0 && (
               <View style={s.section}>
@@ -410,12 +391,7 @@ const WorkoutTodayScreen: FC = () => {
         )}
 
         {!loading && hasPlan && !isRest && (
-          <Animated.View
-            style={{
-              opacity: anims[3].opacity,
-              transform: [{ translateY: anims[3].translateY }],
-            }}
-          >
+          <Animated.View style={staggerStyles[3]}>
             <View style={s.ctaWrap}>
               {alreadyDone ? (
                 <>

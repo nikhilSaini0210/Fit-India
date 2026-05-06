@@ -1,5 +1,4 @@
 import {
-  Animated,
   Image,
   Keyboard,
   StyleSheet,
@@ -16,6 +15,7 @@ import { useApiError, useAuth, useOnboarding, useStagger } from '../../hooks';
 import { loginValidate } from '../../helper';
 import { useToast } from '../../context';
 import { useColors } from '../../store';
+import Animated from 'react-native-reanimated';
 
 const LoginScreen: FC = () => {
   const colors = useColors();
@@ -30,7 +30,7 @@ const LoginScreen: FC = () => {
     {},
   );
 
-  const { anims, start } = useStagger(4, 80, 500);
+  const { staggerStyles, start } = useStagger(4, 80, 500);
 
   useEffect(() => {
     start();
@@ -97,10 +97,7 @@ const LoginScreen: FC = () => {
       </View>
 
       <Animated.View
-        style={{
-          opacity: anims[0].opacity,
-          transform: [{ translateY: anims[0].translateY }],
-        }}
+        style={staggerStyles[0]}
       >
         <Text
           style={[
@@ -123,10 +120,7 @@ const LoginScreen: FC = () => {
       <Animated.View
         style={[
           styles.form,
-          {
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          },
+        staggerStyles[1]
         ]}
       >
         <Input
@@ -174,10 +168,7 @@ const LoginScreen: FC = () => {
       </Animated.View>
 
       <Animated.View
-        style={{
-          opacity: anims[2].opacity,
-          transform: [{ translateY: anims[2].translateY }],
-        }}
+        style={staggerStyles[2]}
       >
         <Button
           label="Login"
@@ -191,7 +182,7 @@ const LoginScreen: FC = () => {
       <Divider label="or" marginV={rs.verticalScale(24)} />
 
       <Animated.View
-        style={[styles.registerRow, { opacity: anims[3].opacity }]}
+        style={[styles.registerRow, staggerStyles[3]]}
       >
         <Text
           style={[

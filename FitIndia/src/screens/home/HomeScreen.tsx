@@ -1,5 +1,4 @@
 import {
-  Animated as RNAnimated,
   Pressable,
   StyleSheet,
   Text,
@@ -57,7 +56,7 @@ const HomeScreen: FC = () => {
   const summary = useProgressStore(selectSummary);
   const streak = useProgressStore(selectStreak);
 
-  const { anims, start } = useStagger(7, 60, 400);
+  const { staggerStyles, start } = useStagger(7, 60, 400);
   const { scaleStyle, start: streakPop } = useScalePop(300);
   const { pulseStyle, start: startPulse } = usePulse(0.97, 1.03, 1400);
 
@@ -160,12 +159,7 @@ const HomeScreen: FC = () => {
       refreshing={isRefreshing}
       onRefresh={refresh}
     >
-      <RNAnimated.View
-        style={{
-          opacity: anims[0].opacity,
-          transform: [{ translateY: anims[0].translateY }],
-        }}
-      >
+      <Animated.View style={staggerStyles[0]}>
         <LinearGradient
           colors={[colors.primary + '22', colors.background]}
           style={[s.hero, { paddingTop: insets.top + rs.verticalScale(16) }]}
@@ -266,15 +260,10 @@ const HomeScreen: FC = () => {
             </Pressable>
           )}
         </LinearGradient>
-      </RNAnimated.View>
+      </Animated.View>
 
       <View style={s.content}>
-        <RNAnimated.View
-          style={{
-            opacity: anims[1].opacity,
-            transform: [{ translateY: anims[1].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[1]}>
           <Text
             style={[
               s.sectionTitle,
@@ -309,14 +298,9 @@ const HomeScreen: FC = () => {
               onPress={() => goToQuickWorkout('QuickWorkout')}
             />
           </View>
-        </RNAnimated.View>
+        </Animated.View>
 
-        <RNAnimated.View
-          style={{
-            opacity: anims[2].opacity,
-            transform: [{ translateY: anims[2].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[2]}>
           <Text
             style={[
               s.sectionTitle,
@@ -456,14 +440,9 @@ const HomeScreen: FC = () => {
               </View>
             </Card>
           </Pressable>
-        </RNAnimated.View>
+        </Animated.View>
 
-        <RNAnimated.View
-          style={{
-            opacity: anims[3].opacity,
-            transform: [{ translateY: anims[3].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[3]}>
           <View style={s.sectionRow}>
             <Text
               style={[
@@ -520,14 +499,9 @@ const HomeScreen: FC = () => {
               ))
             )}
           </Card>
-        </RNAnimated.View>
+        </Animated.View>
 
-        <RNAnimated.View
-          style={{
-            opacity: anims[4].opacity,
-            transform: [{ translateY: anims[4].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[4]}>
           <View style={s.sectionRow}>
             <Text
               style={[
@@ -573,14 +547,9 @@ const HomeScreen: FC = () => {
               }
             />
           )}
-        </RNAnimated.View>
+        </Animated.View>
 
-        <RNAnimated.View
-          style={{
-            opacity: anims[5].opacity,
-            transform: [{ translateY: anims[5].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[5]}>
           <View style={s.sectionRow}>
             <Text
               style={[
@@ -691,16 +660,11 @@ const HomeScreen: FC = () => {
               </Pressable>
             ))}
           </View>
-        </RNAnimated.View>
+        </Animated.View>
 
-        <RNAnimated.View
-          style={{
-            opacity: anims[6].opacity,
-            transform: [{ translateY: anims[6].translateY }],
-          }}
-        >
+        <Animated.View style={staggerStyles[6]}>
           <MotivationalBanner streak={streak.current} goal={user?.goal} />
-        </RNAnimated.View>
+        </Animated.View>
       </View>
     </ScreenWrapper>
   );

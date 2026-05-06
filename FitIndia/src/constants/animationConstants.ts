@@ -25,3 +25,7 @@ export const DURATION = {
   glow_in: { duration: 220 },
   glow_out: { duration: 150 },
 } as const;
+
+export const EASING = {
+  out_exp: Easing.out(Easing.exp),
+};
