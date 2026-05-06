@@ -13,8 +13,6 @@ interface ProfileHeaderProps {
   onEdit: () => void;
 }
 
-
-
 const ProfileHeader: FC<ProfileHeaderProps> = ({ user, onEdit }) => {
   const colors = useColors();
   const insets = useSafeInsets();
@@ -42,7 +40,7 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ user, onEdit }) => {
       style={{ transform: [{ scale: headerAnim }], opacity: headerAnim }}
     >
       <LinearGradient
-        colors={[colors.primary + 'CC', colors.primaryDark]}
+        colors={[colors.profileLight, colors.profile, colors.profileDark]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={[
@@ -90,10 +88,8 @@ const ProfileHeader: FC<ProfileHeaderProps> = ({ user, onEdit }) => {
           {user.dietType && (
             <Badge
               label={dietLabels[user.dietType] ?? user.dietType}
-              style={[
-                s.planBadge,
-                { backgroundColor: 'rgba(255,255,255,0.2)' },
-              ]}
+              variant="info"
+              style={[s.planBadge]}
             />
           )}
         </View>

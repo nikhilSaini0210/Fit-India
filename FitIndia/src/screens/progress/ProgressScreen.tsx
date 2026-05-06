@@ -145,7 +145,7 @@ const ProgressScreen: FC = () => {
     >
       <Animated.View style={staggerStyles[0]}>
         <LinearGradient
-          colors={[colors.primary + '20', colors.background]}
+          colors={[colors.progress + '70', 'transparent']}
           style={[
             styles.hero,
             { paddingTop: insets.top + rs.verticalScale(16) },
@@ -409,7 +409,9 @@ const ProgressScreen: FC = () => {
                   styles.periodBtn,
                   {
                     backgroundColor:
-                      period === opt.value ? colors.primary : 'transparent',
+                      period === opt.value
+                        ? colors.primary
+                        : colors.transparent,
                   },
                 ]}
               >

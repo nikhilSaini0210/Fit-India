@@ -49,7 +49,8 @@ const WorkoutTodayScreen: FC = () => {
   const plan = (planData as any)?.plan ?? planData;
   const hasPlan = !!plan || !!workout;
   const isRest = workout?.type === 'rest';
-  const focus = workout?.focus ?? 'default';
+  const focus = workout?.type ?? 'default';
+
   const meta = FOCUS_META[focus] ?? FOCUS_META.default;
 
   const today = new Date();

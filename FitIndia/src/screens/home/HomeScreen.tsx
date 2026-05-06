@@ -161,7 +161,7 @@ const HomeScreen: FC = () => {
     >
       <Animated.View style={staggerStyles[0]}>
         <LinearGradient
-          colors={[colors.primary + '22', colors.background]}
+          colors={[colors.primary + '70', 'transparent']}
           style={[s.hero, { paddingTop: insets.top + rs.verticalScale(16) }]}
         >
           <View style={s.heroRow}>

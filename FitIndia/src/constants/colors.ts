@@ -17,6 +17,17 @@ const brand = {
   whiteTr: 'rgba(255,255,255,0.15)',
   premium: '#D97706',
   premiumLight: '#FBBF24',
+
+  home: '#22C55E',
+  diet: '#F97316',
+  workout: '#EF4444',
+  progress: '#3B82F6',
+  profile: '#8B5CF6',
+  profileLight: '#A78BFA',
+  profileDark: '#6D28D9',
+  profileDeep: '#4C1D95',
+
+  transparent: 'transparent',
 };
 
 // ─── Light theme ──────────────────────────────────────────────────────────────

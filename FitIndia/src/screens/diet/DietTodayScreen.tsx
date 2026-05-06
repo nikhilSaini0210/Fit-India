@@ -166,7 +166,7 @@ const DietTodayScreen: FC = () => {
       onRefresh={refresh}
     >
       <LinearGradient
-        colors={[colors.primary + '22', 'transparent']}
+        colors={[colors.diet + '70', 'transparent']}
         style={[s.header, { paddingTop: insets.top + rs.verticalScale(16) }]}
       >
         <View style={s.headerTop}>
